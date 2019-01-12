@@ -7,7 +7,7 @@ import com.github.fluidsonic.fluid.json.JSONDecoder
 import com.github.fluidsonic.fluid.json.JSONEncoder
 
 
-object EmailAddressJSONCodec : AbstractJSONCodec<EmailAddress, JSONCodingContext>() {
+internal object EmailAddressJSONCodec : AbstractJSONCodec<EmailAddress, JSONCodingContext>() {
 
 	override fun decode(valueType: JSONCodingType<in EmailAddress>, decoder: JSONDecoder<JSONCodingContext>) =
 		EmailAddress(decoder.readString())

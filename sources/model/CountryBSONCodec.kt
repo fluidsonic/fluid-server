@@ -4,7 +4,7 @@ import org.bson.BsonReader
 import org.bson.BsonWriter
 
 
-object CountryBSONCodec : AbstractBSONCodec<Country, BSONCodingContext>() {
+internal object CountryBSONCodec : AbstractBSONCodec<Country, BSONCodingContext>() {
 
 	override fun BsonReader.decode(context: BSONCodingContext) =
 		readString().let { code ->

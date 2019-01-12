@@ -1,15 +1,10 @@
 package com.github.fluidsonic.baku
 
-import com.github.fluidsonic.jetpack.*
 import org.bson.AbstractBsonReader
 import org.bson.AbstractBsonReader.State
 import org.bson.BsonInvalidOperationException
 import org.bson.BsonReader
 import org.bson.BsonType
-import org.bson.codecs.DecoderContext
-import org.bson.types.ObjectId
-import java.time.Instant
-import java.util.Date
 
 
 fun BsonReader.expectValue(methodName: String) {
@@ -105,35 +100,12 @@ fun BsonReader.readCoercedInt32OrNull(): Int? {
 }
 
 
-fun BsonReader.readCoordinate() =
-	readArray {
-		val longitude = readCoercedDouble()
-		val latitude = readCoercedDouble()
+inline fun <T> BsonReader.readDocument(read: BsonReader.() -> T): T {
+	readStartDocument()
+	val result = read()
+	readEndDocument()
 
-		GeoCoordinate(latitude = latitude, longitude = longitude)
-	}
-
-
-fun BsonReader.readDate() =
-	Date(readDateTime())
-
-
-fun BsonReader.readDate(name: String): Date {
-	readName(name)
-
-	return Date(readDateTime())
-}
-
-
-fun BsonReader.readDateOrNull(): Date? {
-	expectValue("readDateOrNull")
-
-	if (currentBsonType == BsonType.NULL) {
-		skipValue()
-		return null
-	}
-
-	return readDate()
+	return result
 }
 
 
@@ -144,12 +116,22 @@ inline fun <T> BsonReader.readDocument(name: String, read: BsonReader.() -> T): 
 }
 
 
-inline fun <T> BsonReader.readDocument(read: BsonReader.() -> T): T {
-	readStartDocument()
-	val result = read()
-	readEndDocument()
+inline fun <T> BsonReader.readDocumentOrNull(read: BsonReader.() -> T): T? {
+	expectValue("readDocumentOrNull")
 
-	return result
+	if (currentBsonType == BsonType.NULL) {
+		skipValue()
+		return null
+	}
+
+	return readDocument(read)
+}
+
+
+inline fun <T> BsonReader.readDocumentOrNull(name: String, read: BsonReader.() -> T): T? {
+	readName(name)
+
+	return readDocumentOrNull(read)
 }
 
 
@@ -159,27 +141,6 @@ inline fun BsonReader.readDocumentWithValues(readValue: BsonReader.(fieldName: S
 			readValue(readName())
 		}
 	}
-}
-
-
-fun BsonReader.readInstant(): Instant = Instant.ofEpochMilli(readDateTime())
-
-
-fun BsonReader.readInstant(name: String): Instant {
-	readName(name)
-	return readInstant()
-}
-
-
-fun BsonReader.readInstantOrNull(): Instant? {
-	expectValue("readInstantOrNull")
-
-	if (currentBsonType == BsonType.NULL) {
-		skipValue()
-		return null
-	}
-
-	return readInstant()
 }
 
 
@@ -204,26 +165,6 @@ inline fun <Key, Value> BsonReader.readMap(readEntry: BsonReader.(fieldName: Str
 }
 
 
-fun BsonReader.readObjectIds(): List<ObjectId> = readObjectIds(container = mutableListOf())
-
-
-fun <Container> BsonReader.readObjectIds(container: Container): Container where Container : MutableCollection<in ObjectId> {
-	readStartArray()
-
-	while (readBsonType() != BsonType.END_OF_DOCUMENT) {
-		container.add(readObjectId())
-	}
-
-	readEndArray()
-
-	return container
-}
-
-
-fun <M, U> BsonReader.readMeasurement(unit: U): M where M : Measurement<M, U>, U : UnitType<U, M> =
-	unit.value(readCoercedDouble())
-
-
 fun BsonReader.readStringOrNull(): String? {
 	expectValue("readStringOrNull")
 
@@ -234,6 +175,3 @@ fun BsonReader.readStringOrNull(): String? {
 
 	return readString()
 }
-
-
-private val dummyContext = DecoderContext.builder().build()

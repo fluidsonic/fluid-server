@@ -7,7 +7,7 @@ import com.github.fluidsonic.fluid.json.JSONDecoder
 import com.github.fluidsonic.fluid.json.JSONEncoder
 
 
-object PhoneNumberJSONCodec : AbstractJSONCodec<PhoneNumber, JSONCodingContext>() {
+internal object PhoneNumberJSONCodec : AbstractJSONCodec<PhoneNumber, JSONCodingContext>() {
 
 	override fun decode(valueType: JSONCodingType<in PhoneNumber>, decoder: JSONDecoder<JSONCodingContext>) =
 		PhoneNumber(decoder.readString())

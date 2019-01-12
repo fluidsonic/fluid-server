@@ -8,7 +8,7 @@ import com.github.fluidsonic.fluid.json.JSONEncoder
 import com.github.fluidsonic.fluid.json.JSONException
 
 
-object CountryJSONCodec : AbstractJSONCodec<Country, JSONCodingContext>() {
+internal object CountryJSONCodec : AbstractJSONCodec<Country, JSONCodingContext>() {
 
 	override fun decode(valueType: JSONCodingType<in Country>, decoder: JSONDecoder<JSONCodingContext>) =
 		decoder.readString().let { code ->

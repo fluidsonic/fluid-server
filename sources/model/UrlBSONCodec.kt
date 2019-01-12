@@ -5,7 +5,7 @@ import org.bson.BsonReader
 import org.bson.BsonWriter
 
 
-object UrlBSONCodec : AbstractBSONCodec<Url, BSONCodingContext>() {
+internal object UrlBSONCodec : AbstractBSONCodec<Url, BSONCodingContext>() {
 
 	override fun BsonReader.decode(context: BSONCodingContext) =
 		Url(readString())

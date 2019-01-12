@@ -9,11 +9,11 @@ import com.github.fluidsonic.fluid.json.JSONException
 import java.util.Currency
 
 
-object CurrencyJSONCodec : AbstractJSONCodec<Currency, JSONCodingContext>() {
+internal object CurrencyJSONCodec : AbstractJSONCodec<Currency, JSONCodingContext>() {
 
 	override fun decode(valueType: JSONCodingType<in Currency>, decoder: JSONDecoder<JSONCodingContext>) =
 		decoder.readString().let { code ->
-			tryOrNull { Currency.getInstance(code) } ?: throw JSONException("Invalid currency code '$code'")
+			runCatching { Currency.getInstance(code) }.getOrNull() ?: throw JSONException("Invalid currency code '$code'")
 		}
 
 

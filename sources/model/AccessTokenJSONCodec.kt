@@ -5,7 +5,7 @@ import com.github.fluidsonic.fluid.json.JSONCodingContext
 import com.github.fluidsonic.fluid.json.JSONEncoder
 
 
-object AccessTokenJSONCodec : AbstractJSONEncoderCodec<AccessToken, JSONCodingContext>() {
+internal object AccessTokenJSONCodec : AbstractJSONEncoderCodec<AccessToken, JSONCodingContext>() {
 
 	override fun encode(value: AccessToken, encoder: JSONEncoder<JSONCodingContext>) {
 		encoder.writeString(value.raw)

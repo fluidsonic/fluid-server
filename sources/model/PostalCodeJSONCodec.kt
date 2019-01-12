@@ -7,7 +7,7 @@ import com.github.fluidsonic.fluid.json.JSONDecoder
 import com.github.fluidsonic.fluid.json.JSONEncoder
 
 
-object PostalCodeJSONCodec : AbstractJSONCodec<PostalCode, JSONCodingContext>() {
+internal object PostalCodeJSONCodec : AbstractJSONCodec<PostalCode, JSONCodingContext>() {
 
 	override fun decode(valueType: JSONCodingType<in PostalCode>, decoder: JSONDecoder<JSONCodingContext>) =
 		PostalCode(decoder.readString())

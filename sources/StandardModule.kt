@@ -13,6 +13,7 @@ internal object StandardModule : BakuModule<BakuContext, BakuTransaction>() {
 			FirstNameBSONCodec,
 			FullNameBSONCodec,
 			LastNameBSONCodec,
+			PasswordHashBSONCodec,
 			PhoneNumberBSONCodec,
 			PostalCodeBSONCodec,
 			UrlBSONCodec
@@ -29,6 +30,7 @@ internal object StandardModule : BakuModule<BakuContext, BakuTransaction>() {
 			FirstNameJSONCodec,
 			FullNameJSONCodec,
 			LastNameJSONCodec,
+			PasswordJSONCodec,
 			PhoneNumberJSONCodec,
 			PostalCodeJSONCodec,
 			RefreshTokenJSONCodec,

@@ -1,11 +1,6 @@
 package com.github.fluidsonic.baku
 
-import com.github.fluidsonic.jetpack.*
 import org.bson.BsonWriter
-import org.bson.codecs.EncoderContext
-import org.bson.types.ObjectId
-import java.time.temporal.TemporalAccessor
-import java.util.Date
 
 
 fun BsonWriter.write(name: String, boolean: Boolean) {
@@ -14,19 +9,23 @@ fun BsonWriter.write(name: String, boolean: Boolean) {
 }
 
 
-fun BsonWriter.write(name: String, date: Date) {
+inline fun BsonWriter.write(name: String, write: BsonWriter.() -> Unit) {
 	writeName(name)
-	writeDate(date)
+	writeDocument(write = write)
+}
+
+
+inline fun <Value : Any> BsonWriter.write(name: String, document: Value, write: BsonWriter.(value: Value) -> Unit) {
+	writeName(name)
+	writeDocument(document = document, write = write)
 }
 
 
 @JvmName("writeOrSkip")
-fun BsonWriter.write(name: String, dateOrSkip: Date?) {
-	if (dateOrSkip == null) {
-		return
-	}
+inline fun <Value : Any> BsonWriter.write(name: String, documentOrSkip: Value?, write: BsonWriter.(value: Value) -> Unit) {
+	documentOrSkip ?: return
 
-	write(name = name, date = dateOrSkip)
+	write(name = name, document = documentOrSkip, write = write)
 }
 
 
@@ -46,22 +45,6 @@ fun BsonWriter.write(name: String, doubleOrSkip: Double?) {
 }
 
 
-fun BsonWriter.write(name: String, temporal: TemporalAccessor) {
-	writeName(name)
-	writeTemporal(temporal)
-}
-
-
-@JvmName("writeOrSkip")
-fun BsonWriter.write(name: String, temporalOrSkip: TemporalAccessor?) {
-	if (temporalOrSkip == null) {
-		return
-	}
-
-	write(name = name, temporal = temporalOrSkip)
-}
-
-
 fun BsonWriter.write(name: String, int32: Int) {
 	writeName(name)
 	writeInt32(int32)
@@ -75,38 +58,6 @@ fun BsonWriter.write(name: String, int32OrSkip: Int?) {
 	}
 
 	write(name = name, int32 = int32OrSkip)
-}
-
-
-fun <M, U> BsonWriter.write(name: String, measurement: Measurement<M, U>, unit: U) where M : Measurement<M, U>, U : Enum<U>, U : UnitType<U, M> {
-	writeName(name)
-	writeMeasurement(measurement, unit = unit)
-}
-
-
-@JvmName("writeOrSkip")
-fun <M, U> BsonWriter.write(name: String, measurementOrSkip: Measurement<M, U>?, unit: U) where M : Measurement<M, U>, U : Enum<U>, U : UnitType<U, M> {
-	if (measurementOrSkip == null) {
-		return
-	}
-
-	write(name = name, measurement = measurementOrSkip, unit = unit)
-}
-
-
-fun BsonWriter.write(name: String, objectId: ObjectId) {
-	writeName(name)
-	writeObjectId(objectId)
-}
-
-
-@JvmName("writeOrSkip")
-fun BsonWriter.write(name: String, objectIdOrSkip: ObjectId?) {
-	if (objectIdOrSkip == null) {
-		return
-	}
-
-	write(name = name, objectId = objectIdOrSkip)
 }
 
 
@@ -144,29 +95,17 @@ inline fun BsonWriter.writeArray(write: BsonWriter.() -> Unit) {
 }
 
 
-fun BsonWriter.writeCoordinate(coordinate: GeoCoordinate) {
-	writeArray {
-		writeDouble(coordinate.longitude)
-		writeDouble(coordinate.latitude)
-	}
-}
-
-
-fun BsonWriter.writeDate(date: Date) {
-	writeDateTime(date.time)
-}
-
-
-inline fun BsonWriter.writeDocument(name: String, write: BsonWriter.() -> Unit) {
-	writeName(name)
-	writeDocument(write)
-}
-
-
 inline fun BsonWriter.writeDocument(write: BsonWriter.() -> Unit) {
 	writeStartDocument()
 	write()
 	writeEndDocument()
+}
+
+
+inline fun <Value : Any> BsonWriter.writeDocument(document: Value, write: BsonWriter.(value: Value) -> Unit) {
+	writeDocument {
+		write(document)
+	}
 }
 
 
@@ -179,16 +118,6 @@ inline fun <Key, Value> BsonWriter.writeMap(map: Map<Key, Value>, writeEntry: Bs
 }
 
 
-fun BsonWriter.writeTemporal(temporal: TemporalAccessor) {
-	writeDateTime(temporal.toEpochMilli())
-}
-
-
-fun <M, U> BsonWriter.writeMeasurement(measurement: Measurement<M, U>, unit: U) where M : Measurement<M, U>, U : Enum<U>, U : UnitType<U, M> {
-	writeDouble(measurement.valueInUnit(unit))
-}
-
-
 fun BsonWriter.writeStrings(strings: Iterable<String>) {
 	writeStartArray()
 	for (string in strings) {
@@ -196,6 +125,3 @@ fun BsonWriter.writeStrings(strings: Iterable<String>) {
 	}
 	writeEndArray()
 }
-
-
-private val dummyContext = EncoderContext.builder().build()

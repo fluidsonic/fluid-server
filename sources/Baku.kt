@@ -160,7 +160,7 @@ class Baku internal constructor(
 			}
 
 			runBlocking {
-				service.start(context = context)
+				service.onStart(context = context) // TODO we could make BakuContext and BakuService one thing
 			}
 		}
 	}

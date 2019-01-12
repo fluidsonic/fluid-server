@@ -4,7 +4,7 @@ import org.bson.BsonReader
 import org.bson.BsonWriter
 
 
-object PostalCodeBSONCodec : AbstractBSONCodec<PostalCode, BSONCodingContext>() {
+internal object PostalCodeBSONCodec : AbstractBSONCodec<PostalCode, BSONCodingContext>() {
 
 	override fun BsonReader.decode(context: BSONCodingContext) =
 		PostalCode(readString())

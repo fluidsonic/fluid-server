@@ -7,7 +7,7 @@ import com.github.fluidsonic.fluid.json.JSONDecoder
 import com.github.fluidsonic.fluid.json.JSONEncoder
 
 
-object FirstNameJSONCodec : AbstractJSONCodec<FirstName, JSONCodingContext>() {
+internal object FirstNameJSONCodec : AbstractJSONCodec<FirstName, JSONCodingContext>() {
 
 	override fun decode(valueType: JSONCodingType<in FirstName>, decoder: JSONDecoder<JSONCodingContext>) =
 		FirstName(decoder.readString())

@@ -8,7 +8,7 @@ import com.github.fluidsonic.fluid.json.JSONEncoder
 import io.ktor.http.Url
 
 
-object UrlJSONCodec : AbstractJSONCodec<Url, JSONCodingContext>() {
+internal object UrlJSONCodec : AbstractJSONCodec<Url, JSONCodingContext>() {
 
 	override fun decode(valueType: JSONCodingType<in Url>, decoder: JSONDecoder<JSONCodingContext>) =
 		Url(decoder.readString())

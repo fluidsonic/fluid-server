@@ -4,7 +4,7 @@ import org.bson.BsonReader
 import org.bson.BsonWriter
 
 
-object CompanyNameBSONCodec : AbstractBSONCodec<CompanyName, BSONCodingContext>() {
+internal object CompanyNameBSONCodec : AbstractBSONCodec<CompanyName, BSONCodingContext>() {
 
 	override fun BsonReader.decode(context: BSONCodingContext) =
 		CompanyName(readString())

@@ -4,7 +4,7 @@ import org.bson.BsonReader
 import org.bson.BsonWriter
 
 
-object EmailAddressBSONCodec : AbstractBSONCodec<EmailAddress, BSONCodingContext>() {
+internal object EmailAddressBSONCodec : AbstractBSONCodec<EmailAddress, BSONCodingContext>() {
 
 	override fun BsonReader.decode(context: BSONCodingContext) =
 		EmailAddress(readString())

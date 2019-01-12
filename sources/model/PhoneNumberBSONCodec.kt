@@ -4,7 +4,7 @@ import org.bson.BsonReader
 import org.bson.BsonWriter
 
 
-object PhoneNumberBSONCodec : AbstractBSONCodec<PhoneNumber, BSONCodingContext>() {
+internal object PhoneNumberBSONCodec : AbstractBSONCodec<PhoneNumber, BSONCodingContext>() {
 
 	override fun BsonReader.decode(context: BSONCodingContext) =
 		PhoneNumber(readString())

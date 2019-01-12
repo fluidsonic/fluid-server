@@ -1,6 +1,7 @@
 package com.github.fluidsonic.baku
 
 import org.bson.BsonReader
+import org.bson.BsonType
 import org.bson.BsonWriter
 import org.bson.codecs.DecoderContext
 import org.bson.codecs.Encoder
@@ -11,6 +12,7 @@ import kotlin.reflect.KClass
 
 
 abstract class AbstractBSONCodec<Value : Any, in Context : BSONCodingContext>(
+	private val additionalProviders: List<BSONCodecProvider<Context>> = emptyList(),
 	valueClass: Class<Value>? = null
 ) : BSONCodec<Value, Context> {
 
@@ -26,9 +28,21 @@ abstract class AbstractBSONCodec<Value : Any, in Context : BSONCodingContext>(
 	abstract fun BsonWriter.encode(value: Value, context: Context)
 
 
-	@Suppress("UNCHECKED_CAST")
-	final override fun <Value : Any> codecForClass(valueClass: KClass<in Value>) =
-		super.codecForClass(valueClass)
+	final override fun <Value : Any> codecForClass(valueClass: KClass<in Value>): BSONCodec<Value, Context>? {
+		var codec = super.codecForClass(valueClass)
+		if (codec != null) {
+			return codec
+		}
+
+		for (provider in additionalProviders) {
+			codec = provider.codecForClass(valueClass)
+			if (codec != null) {
+				return codec
+			}
+		}
+
+		return null
+	}
 
 
 	internal fun configure(context: Context, rootRegistry: CodecRegistry) {
@@ -49,15 +63,105 @@ abstract class AbstractBSONCodec<Value : Any, in Context : BSONCodingContext>(
 		valueClass
 
 
+	fun <Value : Any> BsonReader.readValueOfType(name: String, `class`: KClass<Value>): Value {
+		readName(name)
+		return readValueOfType(`class`)
+	}
+
+
 	fun <Value : Any> BsonReader.readValueOfType(`class`: KClass<Value>) =
 		requireRootRegistry()[`class`.java].decode(this, decoderContext)!!
 
 
+	fun <Value : Any> BsonReader.readValueOfTypeOrNull(name: String, `class`: KClass<Value>): Value? {
+		readName(name)
+		return readValueOfTypeOrNull(`class`)
+	}
+
+
+	fun <Value : Any> BsonReader.readValueOfTypeOrNull(`class`: KClass<Value>): Value? {
+		expectValue("readValueOfTypeOrNull")
+
+		if (currentBsonType == BsonType.NULL) {
+			skipValue()
+			return null
+		}
+
+		return readValueOfType(`class`)
+	}
+
+
+	fun <Value : Any> BsonReader.readValuesOfType(`class`: KClass<Value>): List<Value> =
+		readValuesOfType(`class`, container = mutableListOf())
+
+
+	fun <Value, Container> BsonReader.readValuesOfType(`class`: KClass<Value>, container: Container): Container where Value : Any, Container : MutableCollection<Value> {
+		readArray {
+			container.add(readValueOfType(`class`))
+		}
+
+		return container
+	}
+
+
+	fun <Value : Any> BsonReader.readValuesOfTypeOrNull(`class`: KClass<Value>): List<Value>? {
+		expectValue("readValuesOfTypeOrNull")
+
+		if (currentBsonType == BsonType.NULL) {
+			skipValue()
+			return null
+		}
+
+		return readValuesOfType(`class`)
+	}
+
+
+	fun <Value, Container> BsonReader.readValuesOfTypeOrNull(`class`: KClass<Value>, container: Container): Container? where Value : Any, Container : MutableCollection<Value> {
+		expectValue("readValuesOfTypeOrNull")
+
+		if (currentBsonType == BsonType.NULL) {
+			skipValue()
+			return null
+		}
+
+		return readValuesOfType(`class`, container = container)
+	}
+
+
 	fun BsonWriter.write(name: String, value: Any) {
 		writeName(name)
+		writeValue(value)
+	}
 
+
+	@JvmName("writeOrSkip")
+	fun BsonWriter.write(name: String, valueOrSkip: Any?) {
+		valueOrSkip ?: return
+
+		writeName(name)
+
+		write(name = name, value = valueOrSkip)
+	}
+
+
+	fun BsonWriter.write(name: String, values: Iterable<Any>) {
+		writeName(name)
+		writeValues(values)
+	}
+
+
+	fun BsonWriter.writeValue(value: Any) {
 		@Suppress("UNCHECKED_CAST")
 		(requireRootRegistry()[value::class.java] as Encoder<Any>).encode(this, value, encoderContext)
+	}
+
+
+	fun BsonWriter.writeValues(values: Iterable<Any>) {
+		writeArray {
+			for (value in values) {
+				writeValue(value)
+			}
+		}
 	}
 
 

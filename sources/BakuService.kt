@@ -7,5 +7,5 @@ interface BakuService<Context : BakuContext, Transaction : BakuTransaction> {
 
 	suspend fun createContext(): Context
 	suspend fun createTransaction(context: Context, call: ApplicationCall?): Transaction
-	suspend fun start(context: Context)
+	suspend fun onStart(context: Context) {}
 }

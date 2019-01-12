@@ -5,11 +5,11 @@ import org.bson.BsonWriter
 import java.util.Currency
 
 
-object CurrencyBSONCodec : AbstractBSONCodec<Currency, BSONCodingContext>() {
+internal object CurrencyBSONCodec : AbstractBSONCodec<Currency, BSONCodingContext>() {
 
 	override fun BsonReader.decode(context: BSONCodingContext) =
 		readString().let { code ->
-			tryOrNull { Currency.getInstance(code) } ?: throw BSONException("Invalid currency code '$code'")
+			runCatching { Currency.getInstance(code) }.getOrNull() ?: throw BSONException("Invalid currency code '$code'")
 		}
 
 
