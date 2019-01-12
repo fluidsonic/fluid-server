@@ -29,6 +29,7 @@ internal object StandardModule : BakuModule<BakuContext, BakuTransaction>() {
 			EmailAddressJSONCodec,
 			FirstNameJSONCodec,
 			FullNameJSONCodec,
+			GeoCoordinateJSONCodec,
 			LastNameJSONCodec,
 			PasswordJSONCodec,
 			PhoneNumberJSONCodec,

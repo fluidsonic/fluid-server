@@ -7,7 +7,6 @@ import io.ktor.application.ApplicationStarting
 import io.ktor.application.install
 import io.ktor.features.CORS
 import io.ktor.features.CallLogging
-import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
@@ -148,11 +147,13 @@ class Baku internal constructor(
 				entityResolver = EntityResolver(resolvers = entityResolvers)
 			))
 
-			// TODO replace with own feature
-			install(ContentNegotiation) {
-				register(ContentType.Application.Json, JSONConverter(
-					jsonCodecProvider = jsonCodecProvider
-				))
+			// TODO replace with own APIRequestProcessing feature
+			install(QueryConsideringContentNegotiation) {
+				converters {
+					register(ContentType.Application.Json, JSONConverter(
+						jsonCodecProvider = jsonCodecProvider
+					))
+				}
 			}
 
 			routing {
