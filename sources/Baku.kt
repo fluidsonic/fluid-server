@@ -186,7 +186,6 @@ class Baku internal constructor(
 }
 
 
-@JvmName("bakuWithCustomTransactions'")
 fun <Context : BakuContext, Transaction : BakuTransaction> baku(
 	assemble: suspend Baku.Builder<Context, Transaction>.() -> BakuService<Context, Transaction>
 ) {
