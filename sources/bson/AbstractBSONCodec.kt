@@ -138,8 +138,6 @@ abstract class AbstractBSONCodec<Value : Any, in Context : BSONCodingContext>(
 	fun BsonWriter.write(name: String, valueOrSkip: Any?) {
 		valueOrSkip ?: return
 
-		writeName(name)
-
 		write(name = name, value = valueOrSkip)
 	}
 
