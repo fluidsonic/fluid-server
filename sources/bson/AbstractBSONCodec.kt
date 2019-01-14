@@ -96,7 +96,7 @@ abstract class AbstractBSONCodec<Value : Any, in Context : BSONCodingContext>(
 
 
 	fun <Value, Container> BsonReader.readValuesOfType(`class`: KClass<Value>, container: Container): Container where Value : Any, Container : MutableCollection<Value> {
-		readArray {
+		readArrayWithValues {
 			container.add(readValueOfType(`class`))
 		}
 
