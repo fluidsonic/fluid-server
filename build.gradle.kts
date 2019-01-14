@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import com.jfrog.bintray.gradle.BintrayExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 
@@ -10,11 +10,14 @@ version = "0.9.0"
 plugins {
 	kotlin("jvm")
 	`java-library`
+	`maven-publish`
+	publishing
 	id("com.github.ben-manes.versions") version DependencyVersions.versions
+	id("com.jfrog.bintray") version DependencyVersions.bintray
 }
 
 dependencies {
-	api(kotlin("stdlib-jdk8"))
+	api(kotlin("stdlib-jdk8", DependencyVersions.kotlin))
 	api("com.github.fluidsonic:fluid-json-coding-jdk8:${DependencyVersions.fluid_json}")
 	api("com.github.fluidsonic:fluid-mongo:${DependencyVersions.fluid_mongo}")
 	api("com.github.fluidsonic:jetpack:${DependencyVersions.jetpack}")
@@ -30,6 +33,12 @@ repositories {
 	bintray("kotlin/ktor")
 	mavenCentral()
 	jcenter()
+}
+
+configurations.all {
+	resolutionStrategy {
+		preferProjectModules()
+	}
 }
 
 sourceSets {
@@ -59,5 +68,48 @@ tasks {
 }
 
 
-val SourceSet.kotlin
-	get() = withConvention(KotlinSourceSet::class) { kotlin }
+// publishing
+
+val javadoc = tasks["javadoc"] as Javadoc
+val javadocJar by tasks.creating(Jar::class) {
+	archiveClassifier.set("javadoc")
+	from(javadoc)
+}
+
+val sourcesJar by tasks.creating(Jar::class) {
+	archiveClassifier.set("sources")
+	from(sourceSets["main"].allSource)
+}
+
+
+configure<BintrayExtension> {
+	user = findProperty("bintrayUser") as String?
+	key = findProperty("bintrayApiKey") as String?
+
+	setPublications("default")
+
+	pkg.apply {
+		repo = "maven"
+		name = "baku"
+		publicDownloadNumbers = true
+		publish = true
+		vcsUrl = "https://github.com/fluidsonic/baku"
+		websiteUrl = "https://github.com/fluidsonic/baku"
+		setLicenses("Apache-2.0")
+
+		version.apply {
+			name = project.version as String?
+			vcsTag = project.version as String?
+		}
+	}
+}
+
+
+configure<PublishingExtension> {
+	publications {
+		create<MavenPublication>("default") {
+			from(components["java"])
+			artifact(sourcesJar)
+		}
+	}
+}
