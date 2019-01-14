@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 description = ""
 group = "com.github.fluidsonic"
-version = "0.9.0"
+version = "0.9.1"
 
 
 plugins {
