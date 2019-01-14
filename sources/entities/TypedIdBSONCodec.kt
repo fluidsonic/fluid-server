@@ -22,7 +22,7 @@ internal class TypedIdBSONCodec(
 	override fun BsonWriter.encode(value: TypedId, context: BSONCodingContext) {
 		writeDocument {
 			write("type", string = value.untyped.factory.type)
-			write("id", value = value)
+			write("id", value = value.untyped)
 		}
 	}
 }
