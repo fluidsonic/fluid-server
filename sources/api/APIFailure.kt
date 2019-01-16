@@ -3,8 +3,8 @@ package com.github.fluidsonic.baku
 
 class APIFailure(
 	val code: String,
-	val developerMessage: String,
 	val userMessage: String,
+	val developerMessage: String = userMessage,
 	cause: Throwable? = null
 ) : Exception(developerMessage, cause) {
 
