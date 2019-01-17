@@ -18,6 +18,7 @@ import java.io.Writer
 
 
 internal class APIResponseProcessor<Transaction : BakuTransaction>(
+	private val additionalEncodings: List<JSONEncoder<Transaction>.() -> Unit>,
 	private val codecProvider: JSONCodecProvider<Transaction>,
 	private val entityResolver: EntityResolver<Transaction>
 ) {
@@ -47,6 +48,8 @@ internal class APIResponseProcessor<Transaction : BakuTransaction>(
 				writer = writer
 			).apply {
 				writeIntoMap {
+					additionalEncodings.forEach { it() }
+
 					if (payload !== Payload.empty) {
 						writeMapElement("payload", value = payload)
 						writeMapElement("entities") { writeEntities() }

@@ -1,6 +1,7 @@
 package com.github.fluidsonic.baku
 
 import com.github.fluidsonic.fluid.json.JSONCodecProvider
+import com.github.fluidsonic.fluid.json.JSONEncoder
 import io.ktor.application.ApplicationCallPipeline
 import io.ktor.application.ApplicationFeature
 import io.ktor.http.content.OutgoingContent
@@ -9,6 +10,7 @@ import io.ktor.util.AttributeKey
 
 
 internal class APIResponseProcessing<Transaction : BakuTransaction>(
+	private val additionalEncodings: List<JSONEncoder<Transaction>.() -> Unit>,
 	private val codecProvider: JSONCodecProvider<Transaction>,
 	private val entityResolver: EntityResolver<Transaction>
 ) : ApplicationFeature<ApplicationCallPipeline, Unit, Unit> {
@@ -25,6 +27,7 @@ internal class APIResponseProcessing<Transaction : BakuTransaction>(
 
 			proceedWith(
 				APIResponseProcessor(
+					additionalEncodings = additionalEncodings,
 					codecProvider = codecProvider,
 					entityResolver = entityResolver
 				)

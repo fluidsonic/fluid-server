@@ -143,6 +143,7 @@ class Baku internal constructor(
 			}
 
 			install(APIResponseProcessing(
+				additionalEncodings = configurations.flatMap { it.additionalResponseEncodings },
 				codecProvider = jsonCodecProvider,
 				entityResolver = EntityResolver(resolvers = entityResolvers)
 			))

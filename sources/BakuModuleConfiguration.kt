@@ -1,6 +1,7 @@
 package com.github.fluidsonic.baku
 
 import com.github.fluidsonic.fluid.json.JSONCodecProvider
+import com.github.fluidsonic.fluid.json.JSONEncoder
 import io.ktor.application.Application
 import io.ktor.routing.Routing
 import io.ktor.util.pipeline.ContextDsl
@@ -10,6 +11,7 @@ class BakuModuleConfiguration<Context : BakuContext, Transaction : BakuTransacti
 	internal val module: BakuModule<Context, Transaction>
 ) {
 
+	internal val additionalResponseEncodings = mutableListOf<JSONEncoder<Transaction>.() -> Unit>()
 	internal val bsonCodecProviders = mutableListOf<BSONCodecProvider<Context>>()
 	internal val customConfigurations = mutableListOf<Application.() -> Unit>()
 	internal val entityResolution = BakuEntityResolution<Transaction>()
@@ -46,6 +48,11 @@ class BakuModuleConfiguration<Context : BakuContext, Transaction : BakuTransacti
 
 	fun jsonCodecProviders(vararg providers: JSONCodecProvider<Transaction>) {
 		jsonCodecProviders += providers
+	}
+
+
+	fun additionalResponseEncoding(encode: JSONEncoder<Transaction>.() -> Unit) {
+		additionalResponseEncodings += encode
 	}
 
 
