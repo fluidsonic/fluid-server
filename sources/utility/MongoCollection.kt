@@ -1,4 +1,4 @@
-package service
+package com.github.fluidsonic.baku
 
 import com.github.fluidsonic.fluid.mongo.MongoCollection
 import com.mongodb.client.model.Filters.eq
