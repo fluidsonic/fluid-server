@@ -7,7 +7,7 @@ import com.github.fluidsonic.fluid.json.JSONEncoder
 
 internal object RefreshTokenJSONCodec : AbstractJSONEncoderCodec<RefreshToken, JSONCodingContext>() {
 
-	override fun encode(value: RefreshToken, encoder: JSONEncoder<JSONCodingContext>) {
-		encoder.writeString(value.raw)
+	override fun JSONEncoder<JSONCodingContext>.encode(value: RefreshToken) {
+		writeString(value.raw)
 	}
 }

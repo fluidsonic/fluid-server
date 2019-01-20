@@ -16,7 +16,7 @@ abstract class BakuModule<Context : BakuContext, Transaction : BakuTransaction> 
 
 	@Suppress("UNCHECKED_CAST")
 	val ApplicationCall.transaction
-		get() = attributes[TransactionProvider.transactionAttributeKey] as Transaction
+		get() = attributes[BakuTransactionFeature.transactionAttributeKey] as Transaction
 
 
 	val PipelineContext<*, ApplicationCall>.transaction
@@ -25,7 +25,7 @@ abstract class BakuModule<Context : BakuContext, Transaction : BakuTransaction> 
 
 
 val ApplicationCall.transaction
-	get() = attributes[TransactionProvider.transactionAttributeKey]
+	get() = attributes[BakuTransactionFeature.transactionAttributeKey]
 
 
 val PipelineContext<*, ApplicationCall>.transaction

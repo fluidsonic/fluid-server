@@ -14,11 +14,11 @@ import com.github.fluidsonic.jetpack.*
 
 internal object GeoCoordinateJSONCodec : AbstractJSONCodec<GeoCoordinate, JSONCodingContext>() {
 
-	override fun decode(valueType: JSONCodingType<in GeoCoordinate>, decoder: JSONDecoder<JSONCodingContext>): GeoCoordinate {
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in GeoCoordinate>): GeoCoordinate {
 		var latitude: Double? = null
 		var longitude: Double? = null
 
-		decoder.readFromMapByElementValue { key ->
+		readFromMapByElementValue { key ->
 			when (key) {
 				"latitude" -> latitude = readDouble()
 				"longitude" -> longitude = readDouble()
@@ -33,8 +33,8 @@ internal object GeoCoordinateJSONCodec : AbstractJSONCodec<GeoCoordinate, JSONCo
 	}
 
 
-	override fun encode(value: GeoCoordinate, encoder: JSONEncoder<JSONCodingContext>) {
-		encoder.writeIntoMap {
+	override fun JSONEncoder<JSONCodingContext>.encode(value: GeoCoordinate) {
+		writeIntoMap {
 			writeMapElement("latitude", double = value.latitude)
 			writeMapElement("longitude", double = value.longitude)
 		}

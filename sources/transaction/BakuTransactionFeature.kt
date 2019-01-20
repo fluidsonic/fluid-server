@@ -6,12 +6,12 @@ import io.ktor.application.call
 import io.ktor.util.AttributeKey
 
 
-internal class TransactionProvider<Context : BakuContext, Transaction : BakuTransaction>(
+internal class BakuTransactionFeature<Context : BakuContext, Transaction : BakuTransaction>(
 	private val service: BakuService<Context, Transaction>,
 	private val context: Context
 ) : ApplicationFeature<ApplicationCallPipeline, Unit, Unit> {
 
-	override val key = AttributeKey<Unit>(TransactionProvider::class.qualifiedName!!)
+	override val key = AttributeKey<Unit>("Baku: transaction feature")
 
 
 	@Suppress("UNCHECKED_CAST")
@@ -19,13 +19,13 @@ internal class TransactionProvider<Context : BakuContext, Transaction : BakuTran
 		Unit.configure()
 
 		pipeline.intercept(ApplicationCallPipeline.Setup) {
-			call.attributes.put(transactionAttributeKey, service.createTransaction(context = this@TransactionProvider.context, call = call))
+			call.attributes.put(transactionAttributeKey, service.createTransaction(context = this@BakuTransactionFeature.context, call = call))
 		}
 	}
 
 
 	companion object {
 
-		val transactionAttributeKey = AttributeKey<BakuTransaction>("BakuTransaction")
+		val transactionAttributeKey = AttributeKey<BakuTransaction>("Baku: transaction")
 	}
 }

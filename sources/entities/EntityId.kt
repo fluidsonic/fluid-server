@@ -47,7 +47,7 @@ interface EntityId {
 
 			final override fun parse(string: String) =
 				string
-					.takeIf { it.startsWith(prefix) }
+					.takeIf { it.startsWith(prefix) || !it.contains('/') }
 					?.removePrefix(prefix)
 					?.let { parseWithoutType(it) }
 
@@ -99,7 +99,7 @@ interface EntityId {
 
 			final override fun parse(string: String) =
 				string
-					.takeIf { it.startsWith(prefix) }
+					.takeIf { it.startsWith(prefix) || !it.contains('/') }
 					?.removePrefix(prefix)
 					?.let { parseWithoutType(it) }
 

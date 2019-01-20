@@ -9,11 +9,11 @@ import com.github.fluidsonic.fluid.json.JSONEncoder
 
 internal object FullNameJSONCodec : AbstractJSONCodec<FullName, JSONCodingContext>() {
 
-	override fun decode(valueType: JSONCodingType<in FullName>, decoder: JSONDecoder<JSONCodingContext>) =
-		FullName(decoder.readString())
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in FullName>) =
+		FullName(readString())
 
 
-	override fun encode(value: FullName, encoder: JSONEncoder<JSONCodingContext>) {
-		encoder.writeString(value.raw)
+	override fun JSONEncoder<JSONCodingContext>.encode(value: FullName) {
+		writeString(value.raw)
 	}
 }

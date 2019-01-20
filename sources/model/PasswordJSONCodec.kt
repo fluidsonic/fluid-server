@@ -8,6 +8,6 @@ import com.github.fluidsonic.fluid.json.JSONDecoder
 
 internal object PasswordJSONCodec : AbstractJSONDecoderCodec<Password, JSONCodingContext>() {
 
-	override fun decode(valueType: JSONCodingType<in Password>, decoder: JSONDecoder<JSONCodingContext>) =
-		Password(decoder.readString())
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Password>) =
+		Password(readString())
 }

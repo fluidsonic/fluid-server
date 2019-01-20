@@ -1,7 +1,7 @@
 package com.github.fluidsonic.baku
 
 
-class APIFailure(
+class BakuCommandFailure(
 	val code: String,
 	val userMessage: String,
 	val developerMessage: String = userMessage,

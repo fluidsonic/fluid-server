@@ -10,11 +10,11 @@ import io.ktor.http.Url
 
 internal object UrlJSONCodec : AbstractJSONCodec<Url, JSONCodingContext>() {
 
-	override fun decode(valueType: JSONCodingType<in Url>, decoder: JSONDecoder<JSONCodingContext>) =
-		Url(decoder.readString())
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Url>) =
+		Url(readString())
 
 
-	override fun encode(value: Url, encoder: JSONEncoder<JSONCodingContext>) {
-		encoder.writeString(value.toString())
+	override fun JSONEncoder<JSONCodingContext>.encode(value: Url) {
+		writeString(value.toString())
 	}
 }

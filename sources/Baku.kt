@@ -4,15 +4,17 @@ import com.github.fluidsonic.fluid.json.JSONCodecProvider
 import com.github.fluidsonic.fluid.mongo.MongoClients
 import io.ktor.application.Application
 import io.ktor.application.ApplicationStarting
+import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.CORS
 import io.ktor.features.CallLogging
 import io.ktor.features.DefaultHeaders
-import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
+import io.ktor.request.ApplicationReceiveRequest
+import io.ktor.response.respond
+import io.ktor.routing.Route
 import io.ktor.routing.routing
-import io.ktor.server.engine.ApplicationEngine
 import io.ktor.server.engine.commandLineEnvironment
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
@@ -25,9 +27,7 @@ import org.slf4j.event.Level
 import kotlin.reflect.KClass
 
 
-class Baku internal constructor(
-	private val engine: ApplicationEngine
-) {
+class Baku internal constructor() {
 
 	class Builder<Context : BakuContext, Transaction : BakuTransaction> internal constructor() {
 
@@ -57,7 +57,7 @@ class Baku internal constructor(
 			engine.start()
 			subscription.dispose()
 
-			return Baku(engine = engine)
+			return Baku()
 		}
 
 
@@ -121,7 +121,7 @@ class Baku internal constructor(
 				mutableMapOf()
 
 			for (configuration in configurations) {
-				for ((idClass, entityResolver) in configuration.entityResolution.resolvers) {
+				for ((idClass, entityResolver) in configuration.entities.resolvers) {
 					val previousModule = entityResolverSources.putIfAbsent(idClass, configuration.module)
 					if (previousModule != null) {
 						error("Cannot add entity resolver for $idClass of ${configuration.module} because $previousModule already provides one")
@@ -133,32 +133,82 @@ class Baku internal constructor(
 
 			configurations.forEach { it.customConfigurations.forEach { it() } }
 
-			install(TransactionProvider(
+			install(BakuTransactionFeature(
 				service = service,
 				context = context
 			))
 
-			install(APIFailureProcessing) {
-				configurations.forEach { it.failureConfigurations.forEach { it() } }
-			}
+			install(BakuCommandFailureFeature)
 
-			install(APIResponseProcessing(
+			install(BakuCommandRequestFeature(
+				jsonCodecProvider = jsonCodecProvider
+			))
+
+			install(BakuCommandResponseFeature(
 				additionalEncodings = configurations.flatMap { it.additionalResponseEncodings },
 				codecProvider = jsonCodecProvider,
 				entityResolver = EntityResolver(resolvers = entityResolvers)
 			))
 
-			// TODO replace with own APIRequestProcessing feature
-			install(QueryConsideringContentNegotiation) {
-				converters {
-					register(ContentType.Application.Json, JSONConverter(
-						jsonCodecProvider = jsonCodecProvider
-					))
+			install(BakuQueryParameterBodyFeature)
+
+			var topRouteBuilder: Route.() -> Unit = {
+				for (configuration in configurations) {
+					for (routingConfiguration in configuration.routeConfigurations) {
+						routingConfiguration()
+					}
+				}
+			}
+			configurations.forEach {
+				it.routeWrappers.forEach {
+					val next = topRouteBuilder
+					topRouteBuilder = { it(next) }
 				}
 			}
 
 			routing {
-				configurations.forEach { it.routingConfigurations.forEach { it() } }
+				topRouteBuilder()
+			}
+
+			val commandNames = mutableSetOf<BakuCommandName>()
+			val commandHandlers: MutableMap<BakuCommandFactory<*, *, *>, BakuCommandHandler<*, *, *>> = hashMapOf()
+			for (configuration in configurations) {
+				for (handler in configuration.commands.handlers) {
+					val name = handler.factory.name
+					if (commandNames.contains(name)) {
+						error("Multiple commands have the same name: $name")
+					}
+					else {
+						commandNames.add(name)
+					}
+
+					if (commandHandlers.putIfAbsent(handler.factory, handler) != null) {
+						error("Cannot register multiple handlers for command factory ${handler.factory}")
+					}
+				}
+			}
+
+			for (configuration in configurations) {
+				for (route in configuration.commandRoutes) {
+					val factory = route.factory
+
+					@Suppress("UNCHECKED_CAST")
+					val handler = commandHandlers[factory]
+						as BakuCommandHandler<BakuTransaction, BakuCommand, Any>?
+						?: error("No handler registered for command factory $factory")
+
+					route.route.handle {
+						val request = call.request.pipeline.execute(call, ApplicationReceiveRequest(
+							type = BakuCommand::class,
+							value = factory
+						)).value as BakuCommandRequest
+
+						call.respond(BakuCommandResponse(
+							factory = factory,
+							result = handler.run { transaction.handler() }(request.command)
+						))
+					}
+				}
 			}
 
 			runBlocking {

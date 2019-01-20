@@ -9,12 +9,12 @@ import com.github.fluidsonic.fluid.json.JSONEncoder
 
 internal object EmailAddressJSONCodec : AbstractJSONCodec<EmailAddress, JSONCodingContext>() {
 
-	override fun decode(valueType: JSONCodingType<in EmailAddress>, decoder: JSONDecoder<JSONCodingContext>) =
-		EmailAddress(decoder.readString())
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in EmailAddress>) =
+		EmailAddress(readString())
 
 
-	override fun encode(value: EmailAddress, encoder: JSONEncoder<JSONCodingContext>) {
-		encoder.writeString(value.raw)
+	override fun JSONEncoder<JSONCodingContext>.encode(value: EmailAddress) {
+		writeString(value.raw)
 	}
 }
 

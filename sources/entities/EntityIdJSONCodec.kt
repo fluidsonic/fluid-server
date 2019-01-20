@@ -16,13 +16,13 @@ internal class EntityIdJSONCodec<Id : EntityId>(
 	override val decodableType = jsonCodingType(factory.idClass)
 
 
-	override fun decode(valueType: JSONCodingType<in Id>, decoder: JSONDecoder<JSONCodingContext>) =
-		decoder.readString().let { string ->
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Id>) =
+		readString().let { string ->
 			factory.parse(string) ?: throw JSONException("Invalid '${factory.type}' ID: $string")
 		}
 
 
-	override fun encode(value: Id, encoder: JSONEncoder<JSONCodingContext>) {
-		encoder.writeString(factory.serialize(value))
+	override fun JSONEncoder<JSONCodingContext>.encode(value: Id) {
+		writeString(factory.serialize(value))
 	}
 }

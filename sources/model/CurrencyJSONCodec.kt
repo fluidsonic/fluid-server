@@ -11,13 +11,13 @@ import java.util.Currency
 
 internal object CurrencyJSONCodec : AbstractJSONCodec<Currency, JSONCodingContext>() {
 
-	override fun decode(valueType: JSONCodingType<in Currency>, decoder: JSONDecoder<JSONCodingContext>) =
-		decoder.readString().let { code ->
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Currency>) =
+		readString().let { code ->
 			runCatching { Currency.getInstance(code) }.getOrNull() ?: throw JSONException("Invalid currency code '$code'")
 		}
 
 
-	override fun encode(value: Currency, encoder: JSONEncoder<JSONCodingContext>) {
-		encoder.writeString(value.currencyCode)
+	override fun JSONEncoder<JSONCodingContext>.encode(value: Currency) {
+		writeString(value.currencyCode)
 	}
 }

@@ -4,7 +4,7 @@ package com.github.fluidsonic.baku
 internal object StandardModule : BakuModule<BakuContext, BakuTransaction>() {
 
 	override fun BakuModuleConfiguration<BakuContext, BakuTransaction>.configure() {
-		bsonCodecProviders(
+		bson(
 			CityNameBSONCodec,
 			CompanyNameBSONCodec,
 			CountryBSONCodec,
@@ -19,9 +19,8 @@ internal object StandardModule : BakuModule<BakuContext, BakuTransaction>() {
 			UrlBSONCodec
 		)
 
-		jsonCodecProviders(
+		json(
 			AccessTokenJSONCodec,
-			APIRequestJSONCodec,
 			CityNameJSONCodec,
 			CompanyNameJSONCodec,
 			CountryJSONCodec,
