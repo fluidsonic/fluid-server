@@ -45,7 +45,7 @@ internal class BakuCommandRequestFeature<Transaction : BakuTransaction>(
 
 				contentType.match(ContentType.Any) ->
 					if (factory is BakuCommandFactory.Empty<*, *, *> || !call.parameters.isEmpty())
-						emptyBody
+						ByteReadChannel(text = "{}", charset = Charsets.UTF_8)
 					else
 						throw BakuCommandFailure(
 							code = "invalidRequest",
@@ -143,11 +143,5 @@ internal class BakuCommandRequestFeature<Transaction : BakuTransaction>(
 			.build()
 
 		return factory.run { decoder.decodeCommand() }
-	}
-
-
-	companion object {
-
-		private val emptyBody = ByteReadChannel(text = "{}", charset = Charsets.UTF_8)
 	}
 }
