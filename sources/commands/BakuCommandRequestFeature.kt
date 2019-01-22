@@ -42,7 +42,7 @@ internal class BakuCommandRequestFeature<Transaction : BakuTransaction>(
 			val log = LoggerFactory.getLogger("BAKU")
 			log.info("CALL: $call")
 			log.info("REQ: ${call.request}")
-			log.info("HEADERS: ${call.request.headers}")
+			log.info("HEADERS: ${call.request.headers.toMap()}")
 			log.info("RECEIVEC: ${call.request.receiveChannel()}")
 
 			val transaction = transaction as Transaction
