@@ -71,7 +71,7 @@ internal class PropertyInjectingJSONReader(
 
 		source.readListEnd()
 
-		depth += 1
+		depth -= 1
 	}
 
 
