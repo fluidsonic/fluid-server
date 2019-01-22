@@ -18,6 +18,7 @@ import io.ktor.util.AttributeKey
 import io.ktor.util.toMap
 import kotlinx.coroutines.io.ByteReadChannel
 import kotlinx.coroutines.io.jvm.javaio.toInputStream
+import org.slf4j.LoggerFactory
 import java.nio.charset.Charset
 
 
@@ -37,6 +38,12 @@ internal class BakuCommandRequestFeature<Transaction : BakuTransaction>(
 				?: throw BakuCommandFailure(code = "fixme", developerMessage = "FIXME", userMessage = BakuCommandFailure.genericUserMessage) // FIXME
 
 			val contentType = call.request.contentType().withoutParameters()
+
+			val log = LoggerFactory.getLogger("BAKU")
+			log.info("CALL: $call")
+			log.info("REQ: ${call.request}")
+			log.info("HEADERS: ${call.request.headers}")
+			log.info("RECEIVEC: ${call.request.receiveChannel()}")
 
 			val transaction = transaction as Transaction
 			val body = when {
