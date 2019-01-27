@@ -5,7 +5,7 @@ import com.github.fluidsonic.fluid.json.JSONCodingContext
 import com.github.fluidsonic.fluid.json.JSONCodingType
 import com.github.fluidsonic.fluid.json.JSONDecoder
 import com.github.fluidsonic.fluid.json.JSONEncoder
-import com.github.fluidsonic.fluid.json.JSONException
+import com.github.fluidsonic.fluid.json.missingPropertyError
 import com.github.fluidsonic.fluid.json.readFromMapByElementValue
 import com.github.fluidsonic.fluid.json.writeIntoMap
 import com.github.fluidsonic.fluid.json.writeMapElement
@@ -27,8 +27,8 @@ internal object GeoCoordinateJSONCodec : AbstractJSONCodec<GeoCoordinate, JSONCo
 		}
 
 		return GeoCoordinate(
-			latitude = latitude ?: throw JSONException("missing 'latitude'"),
-			longitude = longitude ?: throw JSONException("missing 'longitude'")
+			latitude = latitude ?: missingPropertyError("latitude"),
+			longitude = longitude ?: missingPropertyError("longitude")
 		)
 	}
 

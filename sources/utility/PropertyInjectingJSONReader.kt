@@ -1,8 +1,6 @@
 package com.github.fluidsonic.baku
 
-import com.github.fluidsonic.fluid.json.JSONException
-import com.github.fluidsonic.fluid.json.JSONReader
-import com.github.fluidsonic.fluid.json.JSONToken
+import com.github.fluidsonic.fluid.json.*
 
 
 internal class PropertyInjectingJSONReader(
@@ -12,13 +10,57 @@ internal class PropertyInjectingJSONReader(
 
 	private var currentProperty: Map.Entry<String, String>? = null
 	private var currentPropertyKeyRead = false
-	private var depth = 0
-	private var topLevelIsMap = false
+	private var hasReadIsolatedValue = false
+	private var isRightAfterCustomProperty = false
 	private val propertyIterator = properties.entries.iterator()
+	private val rootDepth = source.depth
+	private var topLevelIsMap = false
+	private var valueIsolationCount = 0
+
+
+	override fun beginValueIsolation(): JSONDepth {
+		val nextToken = nextToken // loads currentProperty
+
+		return if (currentProperty != null) {
+			valueIsolationCheck(nextToken != null) { "the root value has already been read" }
+			valueIsolationCheck(!isInValueIsolation || !hasReadIsolatedValue) { "cannot begin before previous one has ended" }
+
+			valueIsolationCount += 1
+
+			depth
+		}
+		else {
+			source.beginValueIsolation()
+		}
+	}
 
 
 	override fun close() {
 		source.close()
+	}
+
+
+	override val depth
+		get() = source.depth
+
+
+	override fun endValueIsolation(depth: JSONDepth) {
+		if (currentProperty != null || isRightAfterCustomProperty) {
+			valueIsolationCheck(depth <= this.depth) { "lists or maps have been ended prematurely" }
+			valueIsolationCheck(this.depth <= depth) { "lists or maps have not been ended properly" }
+			valueIsolationCheck(valueIsolationCount > 0) { "cannot end isolation - it either hasn't begun or been ended already" }
+			valueIsolationCheck(hasReadIsolatedValue) { "exactly one value has been expected but none was read" }
+
+			val valueIsolationCount = valueIsolationCount - 1
+			this.valueIsolationCount = valueIsolationCount
+
+			if (valueIsolationCount == 0) {
+				hasReadIsolatedValue = false
+			}
+		}
+		else {
+			source.endValueIsolation(depth = depth)
+		}
 	}
 
 
@@ -27,17 +69,24 @@ internal class PropertyInjectingJSONReader(
 
 		val token = nextToken
 		if (token != expected) {
-			val tokenString = if (token != null) "'$token'" else "<end of input>"
-			throw JSONException("unexpected token $tokenString, expected $expected")
+			throw JSONException.Schema(
+				message = "Unexpected $token, expected $expected",
+				offset = offset,
+				path = path
+			)
 		}
 	}
+
+
+	override val isInValueIsolation
+		get() = valueIsolationCount > 0 || source.isInValueIsolation
 
 
 	override val nextToken: JSONToken?
 		get() {
 			val nextToken = source.nextToken
 			if (nextToken != JSONToken.mapEnd) return nextToken
-			if (depth != 1 || !topLevelIsMap) return nextToken
+			if (depth.value != (rootDepth.value + 1) || !topLevelIsMap) return nextToken
 
 			if (currentProperty == null) {
 				if (!propertyIterator.hasNext()) return nextToken
@@ -49,6 +98,25 @@ internal class PropertyInjectingJSONReader(
 				JSONToken.stringValue
 			else
 				JSONToken.mapKey
+		}
+
+
+	override val offset: Int
+		get() {
+			if (currentProperty == null) {
+				return source.offset
+			}
+
+			return -1
+		}
+
+
+	override val path: JSONPath
+		get() {
+			val path = source.path
+			val currentProperty = currentProperty ?: return path
+
+			return JSONPath(path.elements + JSONPath.Element.MapKey(currentProperty.key))
 		}
 
 
@@ -70,8 +138,6 @@ internal class PropertyInjectingJSONReader(
 		expectTokenForCustomProperty(JSONToken.listEnd)
 
 		source.readListEnd()
-
-		depth -= 1
 	}
 
 
@@ -79,8 +145,6 @@ internal class PropertyInjectingJSONReader(
 		expectTokenForCustomProperty(JSONToken.listStart)
 
 		source.readListStart()
-
-		depth += 1
 	}
 
 
@@ -96,8 +160,9 @@ internal class PropertyInjectingJSONReader(
 
 		source.readMapEnd()
 
-		depth -= 1
-		if (depth == 0) {
+		isRightAfterCustomProperty = false
+
+		if (depth == rootDepth) {
 			topLevelIsMap = false
 		}
 	}
@@ -106,12 +171,11 @@ internal class PropertyInjectingJSONReader(
 	override fun readMapStart() {
 		expectTokenForCustomProperty(JSONToken.mapStart)
 
-		source.readMapStart()
-
-		if (depth == 0) {
+		if (depth == rootDepth) {
 			topLevelIsMap = true
 		}
-		depth += 1
+
+		source.readMapStart()
 	}
 
 
@@ -132,15 +196,29 @@ internal class PropertyInjectingJSONReader(
 	override fun readString(): String {
 		val currentProperty = currentProperty ?: return source.readString()
 
+		valueIsolationCheck(!isInValueIsolation || !hasReadIsolatedValue) { "cannot read more than one value in a context where only one is expected" }
+
 		return if (currentPropertyKeyRead) {
 			val value = currentProperty.value
 			this.currentProperty = null
 			this.currentPropertyKeyRead = false
 
+			isRightAfterCustomProperty = true
+
+			if (valueIsolationCount > 0) {
+				hasReadIsolatedValue = true
+			}
+
 			value
 		}
 		else {
 			this.currentPropertyKeyRead = true
+
+			isRightAfterCustomProperty = false
+
+			if (valueIsolationCount > 0) {
+				hasReadIsolatedValue = true
+			}
 
 			currentProperty.key
 		}
@@ -149,5 +227,23 @@ internal class PropertyInjectingJSONReader(
 
 	override fun terminate() {
 		source.terminate()
+	}
+
+
+	private inline fun valueIsolationCheck(value: Boolean, lazyMessage: () -> String) {
+		// contract {
+		//  returns() implies value
+		// }
+
+		if (!value) valueIsolationError(lazyMessage())
+	}
+
+
+	private fun valueIsolationError(message: String): Nothing {
+		throw JSONException.Parsing(
+			message = "Value isolation failed: $message",
+			offset = offset,
+			path = path
+		)
 	}
 }

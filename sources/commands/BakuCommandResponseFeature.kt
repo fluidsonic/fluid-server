@@ -1,9 +1,6 @@
 package com.github.fluidsonic.baku
 
-import com.github.fluidsonic.fluid.json.JSONCodecProvider
-import com.github.fluidsonic.fluid.json.JSONEncoder
-import com.github.fluidsonic.fluid.json.writeIntoMap
-import com.github.fluidsonic.fluid.json.writeMapElement
+import com.github.fluidsonic.fluid.json.*
 import io.ktor.application.ApplicationCallPipeline
 import io.ktor.application.ApplicationFeature
 import io.ktor.http.ContentType
@@ -59,14 +56,26 @@ internal class BakuCommandResponseFeature<Transaction : BakuTransaction>(
 			entityResolver = entityResolver,
 			writer = writer
 		).apply {
-			writeIntoMap {
-				additionalEncodings.forEach { it() }
-				writeMapElement("result") {
+			writeMapStart()
+
+			additionalEncodings.forEach { it() }
+
+			writeMapElement("result") {
+				try {
 					factory.run { encodeResult(response.result) }
 				}
-				writeMapElement("entities") { writeEntities() }
-				writeMapElement("status", string = "success")
+				catch (e: JSONException) {
+					e.addSuppressed(JSONException.Serialization("… when encoding result of command '${factory.name}' using ${factory::class.qualifiedName}"))
+					throw e
+				}
 			}
+
+			writeMapKey("entities")
+			writeEntities()
+
+			writeMapElement("status", string = "success")
+
+			writeMapEnd()
 		}
 
 		return TextContent(

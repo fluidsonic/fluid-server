@@ -1,10 +1,6 @@
 package com.github.fluidsonic.baku
 
-import com.github.fluidsonic.fluid.json.JSONCodecProvider
-import com.github.fluidsonic.fluid.json.JSONDecoder
-import com.github.fluidsonic.fluid.json.JSONException
-import com.github.fluidsonic.fluid.json.JSONReader
-import com.github.fluidsonic.fluid.json.readFromMapByElementValue
+import com.github.fluidsonic.fluid.json.*
 import io.ktor.application.ApplicationCallPipeline
 import io.ktor.application.ApplicationFeature
 import io.ktor.application.call
@@ -98,15 +94,22 @@ internal class BakuCommandRequestFeature<Transaction : BakuTransaction>(
 				}
 			}
 
-			command = command ?: if (factory is BakuCommandFactory.Empty<Transaction, *, *>) {
-				factory.createCommand()
-			}
-			else {
-				JSONReader.build("{}").readCommand(
-					factory = factory,
-					parameters = parameters,
-					transaction = transaction
-				)
+			if (command == null) {
+				command = if (factory is BakuCommandFactory.Empty<Transaction, *, *>) {
+					factory.createCommand()
+				}
+				else {
+					JSONReader.build("""{"command":{}}""").run {
+						readFromMap {
+							readMapKey()
+							readCommand(
+								factory = factory,
+								parameters = parameters,
+								transaction = transaction
+							)
+						}
+					}
+				}
 			}
 
 			return BakuCommandRequest(
@@ -114,12 +117,16 @@ internal class BakuCommandRequestFeature<Transaction : BakuTransaction>(
 			)
 		}
 		catch (e: JSONException) {
-			throw BakuCommandFailure( // FIXME
-				code = "invalidRequest",
-				developerMessage = e.message ?: "Unable to process JSON",
-				userMessage = BakuCommandFailure.genericUserMessage,
-				cause = e
-			)
+			if (e is JSONException.Schema || e is JSONException.Syntax) {
+				throw BakuCommandFailure(
+					code = "invalidRequest",
+					developerMessage = e.message,
+					userMessage = BakuCommandFailure.genericUserMessage,
+					cause = e
+				)
+			}
+
+			throw e
 		}
 	}
 
@@ -142,6 +149,12 @@ internal class BakuCommandRequestFeature<Transaction : BakuTransaction>(
 			.source(commandReader)
 			.build()
 
-		return factory.run { decoder.decodeCommand() }
+		return try {
+			factory.run { decoder.decodeCommand() }
+		}
+		catch (e: JSONException) {
+			e.addSuppressed(JSONException.Parsing("… when decoding command '${factory.name}' using ${factory::class.qualifiedName}"))
+			throw e
+		}
 	}
 }

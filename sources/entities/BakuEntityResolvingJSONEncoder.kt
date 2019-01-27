@@ -4,6 +4,7 @@ import com.github.fluidsonic.fluid.json.JSONCodecProvider
 import com.github.fluidsonic.fluid.json.JSONEncoder
 import com.github.fluidsonic.fluid.json.JSONException
 import com.github.fluidsonic.fluid.json.JSONWriter
+import com.github.fluidsonic.fluid.json.isolateValueWrite
 import com.github.fluidsonic.fluid.json.withErrorChecking
 import kotlinx.coroutines.channels.associateByTo
 import org.slf4j.LoggerFactory
@@ -77,8 +78,22 @@ internal class BakuEntityResolvingJSONEncoder<Transaction : BakuTransaction>(
 			}
 
 			codecProvider.encoderCodecForClass(value::class)
-				?.run { encode(value = value) }
-				?: throw JSONException("no encoder codec registered for ${value::class}: $value")
+				?.run {
+					try {
+						isolateValueWrite {
+							encode(value = value)
+						}
+					}
+					catch (e: JSONException) {
+						// TODO remove .java once KT-28418 is fixed
+						e.addSuppressed(JSONException.Serialization("… when encoding value of ${value::class} using ${this::class.java.name}: $value"))
+						throw e
+					}
+				}
+				?: throw JSONException.Serialization(
+					message = "No encoder codec registered for ${value::class}: $value",
+					path = path
+				)
 		}
 	}
 
