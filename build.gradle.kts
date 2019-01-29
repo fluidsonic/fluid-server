@@ -21,6 +21,7 @@ dependencies {
 	api("com.github.fluidsonic:fluid-json-coding-jdk8:${DependencyVersions.fluid_json}")
 	api("com.github.fluidsonic:fluid-mongo:${DependencyVersions.fluid_mongo}")
 	api("com.github.fluidsonic:jetpack:${DependencyVersions.jetpack}")
+	api("io.ktor:ktor-auth-jwt:${DependencyVersions.ktor}")
 	api("io.ktor:ktor-server-netty:${DependencyVersions.ktor}")
 
 	implementation("ch.qos.logback:logback-classic:${DependencyVersions.logback}")

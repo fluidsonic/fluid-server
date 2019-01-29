@@ -1,13 +1,11 @@
 package com.github.fluidsonic.baku
 
-import com.github.fluidsonic.fluid.json.JSONWriter
-import com.github.fluidsonic.fluid.json.use
-import com.github.fluidsonic.fluid.json.writeIntoMap
-import com.github.fluidsonic.fluid.json.writeMapElement
+import com.github.fluidsonic.fluid.json.*
 import io.ktor.application.ApplicationCall
 import io.ktor.application.ApplicationCallPipeline
 import io.ktor.application.ApplicationFeature
 import io.ktor.application.call
+import io.ktor.auth.UnauthorizedResponse
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.WriterContent
@@ -61,6 +59,26 @@ internal object BakuCommandFailureFeature : ApplicationFeature<ApplicationCallPi
 
 	override fun install(pipeline: ApplicationCallPipeline, configure: Unit.() -> Unit) {
 		Unit.configure()
+
+		pipeline.sendPipeline.intercept(ApplicationSendPipeline.Transform) {
+			val subject = subject
+			if (subject is UnauthorizedResponse) {
+				val response = call.response
+				response.status(subject.status ?: HttpStatusCode.Unauthorized)
+
+				for (header in subject.headers.entries()) {
+					for (value in header.value) {
+						response.headers.append(name = header.key, value = value)
+					}
+				}
+
+				throw BakuCommandFailure(
+					code = "invalidAccessToken",
+					developerMessage = "The access token is either invalid or no longer valid.",
+					userMessage = "You are no longer signed in. Please sign out and then sign in again."
+				)
+			}
+		}
 
 		pipeline.sendPipeline.intercept(ApplicationSendPipeline.Render) {
 			intercept(this)
