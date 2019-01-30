@@ -1,6 +1,6 @@
 package com.github.fluidsonic.baku
 
-import com.github.fluidsonic.fluid.mongo.MongoCollection
+import com.github.fluidsonic.fluid.mongo.*
 import com.mongodb.client.model.Filters.eq
 import com.mongodb.client.model.FindOneAndUpdateOptions
 import org.bson.conversions.Bson

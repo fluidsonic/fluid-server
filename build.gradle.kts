@@ -20,7 +20,7 @@ dependencies {
 	api(kotlin("stdlib-jdk8", DependencyVersions.kotlin))
 	api("com.github.fluidsonic:fluid-json-coding-jdk8:${DependencyVersions.fluid_json}")
 	api("com.github.fluidsonic:fluid-mongo:${DependencyVersions.fluid_mongo}")
-	api("com.github.fluidsonic:jetpack:${DependencyVersions.jetpack}")
+	api("com.github.fluidsonic:fluid-stdlib:${DependencyVersions.fluid_stdlib}")
 	api("io.ktor:ktor-auth-jwt:${DependencyVersions.ktor}")
 	api("io.ktor:ktor-server-netty:${DependencyVersions.ktor}")
 
@@ -28,7 +28,6 @@ dependencies {
 }
 
 repositories {
-	bintray("fluidsonic/maven")
 	bintray("kotlin/kotlin-eap")
 	bintray("kotlin/kotlinx")
 	bintray("kotlin/ktor")

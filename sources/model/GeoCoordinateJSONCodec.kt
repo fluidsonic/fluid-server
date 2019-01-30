@@ -1,15 +1,7 @@
 package com.github.fluidsonic.baku
 
-import com.github.fluidsonic.fluid.json.AbstractJSONCodec
-import com.github.fluidsonic.fluid.json.JSONCodingContext
-import com.github.fluidsonic.fluid.json.JSONCodingType
-import com.github.fluidsonic.fluid.json.JSONDecoder
-import com.github.fluidsonic.fluid.json.JSONEncoder
-import com.github.fluidsonic.fluid.json.missingPropertyError
-import com.github.fluidsonic.fluid.json.readFromMapByElementValue
-import com.github.fluidsonic.fluid.json.writeIntoMap
-import com.github.fluidsonic.fluid.json.writeMapElement
-import com.github.fluidsonic.jetpack.*
+import com.github.fluidsonic.fluid.json.*
+import com.github.fluidsonic.fluid.stdlib.*
 
 
 internal object GeoCoordinateJSONCodec : AbstractJSONCodec<GeoCoordinate, JSONCodingContext>() {
