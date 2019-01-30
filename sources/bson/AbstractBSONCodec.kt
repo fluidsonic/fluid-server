@@ -148,6 +148,14 @@ abstract class AbstractBSONCodec<Value : Any, in Context : BSONCodingContext>(
 	}
 
 
+	@JvmName("writeOrSkip")
+	fun BsonWriter.write(name: String, valuesOrSkip: Iterable<Any>?) {
+		valuesOrSkip ?: return
+
+		write(name = name, values = valuesOrSkip)
+	}
+
+
 	fun BsonWriter.writeValue(value: Any) {
 		@Suppress("UNCHECKED_CAST")
 		(requireRootRegistry()[value::class.java] as Encoder<Any>).encode(this, value, encoderContext)
