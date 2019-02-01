@@ -1,115 +1,35 @@
-import com.jfrog.bintray.gradle.BintrayExtension
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-
-description = ""
-group = "com.github.fluidsonic"
-version = "0.9.15"
-
+import com.github.fluidsonic.fluid.library.*
 
 plugins {
-	kotlin("jvm")
-	`java-library`
-	`maven-publish`
-	publishing
-	id("com.github.ben-manes.versions") version DependencyVersions.versions
-	id("com.jfrog.bintray") version DependencyVersions.bintray
+	id("com.github.fluidsonic.fluid-library") version "0.9.0"
+}
+
+fluidLibrary {
+	name = "baku"
+	version = "0.9.16"
+}
+
+fluidLibraryVariant {
+	jdk = JDK.v1_8
 }
 
 dependencies {
-	api(kotlin("stdlib-jdk8", DependencyVersions.kotlin))
-	api("com.github.fluidsonic:fluid-json-coding-jdk8:${DependencyVersions.fluid_json}")
-	api("com.github.fluidsonic:fluid-mongo:${DependencyVersions.fluid_mongo}")
-	api("com.github.fluidsonic:fluid-stdlib:${DependencyVersions.fluid_stdlib}")
-	api("io.ktor:ktor-auth-jwt:${DependencyVersions.ktor}")
-	api("io.ktor:ktor-server-netty:${DependencyVersions.ktor}")
+	api(fluid("json-coding-jdk8", "0.9.11"))
+	api(fluid("mongo", "0.9.3"))
+	api(fluid("stdlib-jdk8", "0.9.1"))
 
-	implementation("ch.qos.logback:logback-classic:${DependencyVersions.logback}")
+	api(ktor("auth-jwt"))
+	api(ktor("server-netty"))
+
+	implementation("ch.qos.logback:logback-classic:1.2.1")
 }
 
 repositories {
-	bintray("kotlin/kotlin-eap")
-	bintray("kotlin/kotlinx")
+	bintray("fluidsonic/maven")
 	bintray("kotlin/ktor")
-	mavenCentral()
-	jcenter()
-}
-
-configurations.all {
-	resolutionStrategy {
-		preferProjectModules()
-	}
-}
-
-sourceSets {
-	getByName("main") {
-		java.setSrcDirs(emptyList())
-		kotlin.setSrcDirs(listOf("sources"))
-	}
-}
-
-java {
-	sourceCompatibility = JavaVersion.VERSION_1_8
-	targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-tasks {
-	withType<KotlinCompile> {
-		sourceCompatibility = "1.8"
-		targetCompatibility = "1.8"
-
-		kotlinOptions.jvmTarget = "1.8"
-	}
-
-	withType<Wrapper> {
-		distributionType = Wrapper.DistributionType.ALL
-		gradleVersion = "5.1.1"
-	}
 }
 
 
-// publishing
-
-val javadoc = tasks["javadoc"] as Javadoc
-val javadocJar by tasks.creating(Jar::class) {
-	archiveClassifier.set("javadoc")
-	from(javadoc)
-}
-
-val sourcesJar by tasks.creating(Jar::class) {
-	archiveClassifier.set("sources")
-	from(sourceSets["main"].allSource)
-}
-
-
-configure<BintrayExtension> {
-	user = findProperty("bintrayUser") as String?
-	key = findProperty("bintrayApiKey") as String?
-
-	setPublications("default")
-
-	pkg.apply {
-		repo = "maven"
-		name = "baku"
-		publicDownloadNumbers = true
-		publish = true
-		vcsUrl = "https://github.com/fluidsonic/baku"
-		websiteUrl = "https://github.com/fluidsonic/baku"
-		setLicenses("Apache-2.0")
-
-		version.apply {
-			name = project.version as String?
-			vcsTag = project.version as String?
-		}
-	}
-}
-
-
-configure<PublishingExtension> {
-	publications {
-		create<MavenPublication>("default") {
-			from(components["java"])
-			artifact(sourcesJar)
-		}
-	}
-}
+@Suppress("unused")
+fun DependencyHandler.ktor(name: String, version: String = "1.1.2") =
+	"io.ktor:ktor-$name:$version"
