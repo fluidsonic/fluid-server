@@ -119,7 +119,7 @@ class Baku internal constructor() {
 			val jsonCodecProviders: MutableList<JSONCodecProvider<Transaction>> = mutableListOf()
 			jsonCodecProviders += configurations.flatMap { it.jsonCodecProviders }
 			jsonCodecProviders += configurations.flatMap { it.idFactories }.map { EntityIdJSONCodec(factory = it) }
-			val jsonCodecProvider = JSONCodecProvider.of(jsonCodecProviders)
+			val jsonCodecProvider = JSONCodecProvider(jsonCodecProviders)
 
 			providerBasedBSONCodecRegistry.context = context
 			providerBasedBSONCodecRegistry.provider = BSONCodecProvider.of(bsonCodecProviders)

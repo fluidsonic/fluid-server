@@ -54,7 +54,7 @@ internal class BakuEntityResolvingJSONEncoder<Transaction : BakuTransaction>(
 			idsToResolve = entityReferences - resolvedIds
 		}
 
-		if (!unresolvedIds.isEmpty()) {
+		if (unresolvedIds.isNotEmpty()) {
 			log.warn("Response references entities which cannot be found: " + unresolvedIds.joinToString(", "))
 		}
 
@@ -66,13 +66,13 @@ internal class BakuEntityResolvingJSONEncoder<Transaction : BakuTransaction>(
 	}
 
 
+	@Suppress("UNCHECKED_CAST")
 	private fun writeValue(value: Any, collect: Boolean) {
 		withErrorChecking {
 			if (collect && value is EntityId) {
 				entityReferences += value
 			}
 
-			@Suppress("UNCHECKED_CAST")
 			(codecProvider.encoderCodecForClass(value::class) as JSONEncoderCodec<Any, Transaction>?)
 				?.run {
 					try {

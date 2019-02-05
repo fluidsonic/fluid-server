@@ -22,22 +22,11 @@ internal object StandardModule : BakuModule<BakuContext, BakuTransaction>() {
 		)
 
 		json(
-			AccessTokenJSONCodec,
-			CityNameJSONCodec,
-			CompanyNameJSONCodec,
 			CountryJSONCodec,
 			CurrencyJSONCodec,
-			EmailAddressJSONCodec,
-			FirstNameJSONCodec,
-			FullNameJSONCodec,
-			GeoCoordinateJSONCodec,
-			LastNameJSONCodec,
-			PasswordJSONCodec,
-			PhoneNumberJSONCodec,
-			PostalCodeJSONCodec,
-			RefreshTokenJSONCodec,
 			UrlJSONCodec,
-			EnumJSONCodecProvider(transformation = EnumJSONTransformation.ToString(case = EnumJSONTransformation.Case.`lowercase words`))
+			JSONCodecProvider.generated(BakuJSONCodecProvider::class),
+			EnumJSONCodecProvider(transformation = EnumJSONTransformation.ToString(EnumJSONTransformation.Case.`lowercase words`))
 		)
 	}
 }
