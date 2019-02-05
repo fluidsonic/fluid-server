@@ -1,5 +1,7 @@
 package com.github.fluidsonic.baku
 
+import com.github.fluidsonic.fluid.json.*
+
 
 internal object StandardModule : BakuModule<BakuContext, BakuTransaction>() {
 
@@ -34,7 +36,8 @@ internal object StandardModule : BakuModule<BakuContext, BakuTransaction>() {
 			PhoneNumberJSONCodec,
 			PostalCodeJSONCodec,
 			RefreshTokenJSONCodec,
-			UrlJSONCodec
+			UrlJSONCodec,
+			EnumJSONCodecProvider(transformation = EnumJSONTransformation.ToString(case = EnumJSONTransformation.Case.`lowercase words`))
 		)
 	}
 }

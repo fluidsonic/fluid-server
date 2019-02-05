@@ -72,7 +72,8 @@ internal class BakuEntityResolvingJSONEncoder<Transaction : BakuTransaction>(
 				entityReferences += value
 			}
 
-			codecProvider.encoderCodecForClass(value::class)
+			@Suppress("UNCHECKED_CAST")
+			(codecProvider.encoderCodecForClass(value::class) as JSONEncoderCodec<Any, Transaction>?)
 				?.run {
 					try {
 						isolateValueWrite {
