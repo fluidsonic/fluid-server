@@ -3,11 +3,15 @@ package com.github.fluidsonic.baku
 import com.github.fluidsonic.fluid.json.*
 import io.ktor.application.ApplicationCallPipeline
 import io.ktor.application.ApplicationFeature
+import io.ktor.application.call
+import io.ktor.client.utils.CacheControl
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.content.OutgoingContent
 import io.ktor.http.content.TextContent
 import io.ktor.http.withCharset
 import io.ktor.response.ApplicationSendPipeline
+import io.ktor.response.header
 import io.ktor.util.AttributeKey
 import java.io.StringWriter
 
@@ -32,11 +36,11 @@ internal class BakuCommandResponseFeature<Transaction : BakuTransaction>(
 			val response = subject as? BakuCommandResponse
 				?: throw BakuCommandFailure(code = "fixme", developerMessage = "FIXME", userMessage = BakuCommandFailure.genericUserMessage) // FIXME
 
-			val transaction = transaction as Transaction
+			call.response.header(HttpHeaders.CacheControl, CacheControl.NO_CACHE)
 
 			proceedWith(serializeCommandResponse(
 				response = response,
-				transaction = transaction
+				transaction = transaction as Transaction
 			))
 		}
 	}
