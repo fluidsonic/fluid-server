@@ -80,7 +80,9 @@ class Baku internal constructor() {
 				level = Level.INFO
 			}
 
-			install(DefaultHeaders)
+			install(DefaultHeaders) {
+				header(HttpHeaders.Server, "Baku")
+			}
 
 			install(CORS) {
 				anyHost()
