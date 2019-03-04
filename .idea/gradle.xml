@@ -3,6 +3,22 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <compositeConfiguration>
+          <compositeBuild compositeDefinitionSource="SCRIPT">
+            <builds>
+              <build path="$PROJECT_DIR$/../fluid-json">
+                <projects>
+                  <project path="$PROJECT_DIR$/../fluid-json" />
+                  <project path="$PROJECT_DIR$/../fluid-json/basic" />
+                  <project path="$PROJECT_DIR$/../fluid-json/coding" />
+                  <project path="$PROJECT_DIR$/../fluid-json/coding-jdk8" />
+                  <project path="$PROJECT_DIR$/../fluid-json/examples" />
+                  <project path="$PROJECT_DIR$/../fluid-json/ktor-client" />
+                </projects>
+              </build>
+            </builds>
+          </compositeBuild>
+        </compositeConfiguration>
         <option name="disableWrapperSourceDistributionNotification" value="true" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -10,6 +26,12 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/../fluid-json" />
+            <option value="$PROJECT_DIR$/../fluid-json/basic" />
+            <option value="$PROJECT_DIR$/../fluid-json/coding" />
+            <option value="$PROJECT_DIR$/../fluid-json/coding-jdk8" />
+            <option value="$PROJECT_DIR$/../fluid-json/examples" />
+            <option value="$PROJECT_DIR$/../fluid-json/ktor-client" />
           </set>
         </option>
       </GradleProjectSettings>

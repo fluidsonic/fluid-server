@@ -6,3 +6,5 @@ pluginManagement {
 }
 
 rootProject.name = "baku"
+
+includeBuild("../fluid-json")
