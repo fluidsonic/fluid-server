@@ -15,8 +15,8 @@ fluidLibraryVariant {
 }
 
 dependencies {
-	api(fluid("json-annotations", "0.9.13"))
-	api(fluid("json-coding-jdk8", "0.9.13"))
+	api(fluid("json-annotations", "0.9.14"))
+	api(fluid("json-coding-jdk8", "0.9.14"))
 	api(fluid("mongo", "0.9.3"))
 	api(fluid("stdlib-jdk8", "0.9.1"))
 
@@ -25,7 +25,7 @@ dependencies {
 
 	implementation("ch.qos.logback:logback-classic:1.2.1")
 
-	kapt(fluid("json-annotation-processor", "0.9.13"))
+	kapt(fluid("json-annotation-processor", "0.9.14"))
 }
 
 repositories {

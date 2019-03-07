@@ -10,7 +10,7 @@ internal class EntityIdJSONCodec<Id : EntityId>(
 	override val decodableType = jsonCodingType(factory.idClass)
 
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Id>) =
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Id>) =
 		readString().let { string ->
 			factory.parse(string) ?: invalidValueError("'$string' is not a valid '${factory.type}' ID")
 		}

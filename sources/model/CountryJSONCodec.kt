@@ -5,7 +5,7 @@ import com.github.fluidsonic.fluid.json.*
 
 internal object CountryJSONCodec : AbstractJSONCodec<Country, JSONCodingContext>() {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Country>) =
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Country>) =
 		readString().let { code ->
 			Country.byCode(code) ?: invalidValueError("'$code' is not a valid IANA country code")
 		}
