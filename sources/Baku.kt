@@ -1,7 +1,8 @@
 package com.github.fluidsonic.baku
 
-import com.github.fluidsonic.fluid.json.*
-import com.github.fluidsonic.fluid.mongo.*
+import com.github.fluidsonic.fluid.json.JSONCodecProvider
+import com.github.fluidsonic.fluid.json.extended
+import com.github.fluidsonic.fluid.mongo.MongoClients
 import io.ktor.application.Application
 import io.ktor.application.ApplicationStarting
 import io.ktor.application.call
@@ -119,6 +120,7 @@ class Baku internal constructor() {
 			val jsonCodecProviders: MutableList<JSONCodecProvider<Transaction>> = mutableListOf()
 			jsonCodecProviders += configurations.flatMap { it.jsonCodecProviders }
 			jsonCodecProviders += configurations.flatMap { it.idFactories }.map { EntityIdJSONCodec(factory = it) }
+			jsonCodecProviders += JSONCodecProvider.extended
 			val jsonCodecProvider = JSONCodecProvider(jsonCodecProviders)
 
 			providerBasedBSONCodecRegistry.context = context
@@ -158,8 +160,6 @@ class Baku internal constructor() {
 				codecProvider = jsonCodecProvider,
 				entityResolver = EntityResolver(resolvers = entityResolvers)
 			))
-
-			install(BakuQueryParameterBodyFeature)
 
 			var topRouteBuilder: Route.() -> Unit = {
 				for (configuration in configurations) {

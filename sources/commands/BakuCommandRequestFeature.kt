@@ -1,16 +1,25 @@
 package com.github.fluidsonic.baku
 
-import com.github.fluidsonic.fluid.json.*
+import com.github.fluidsonic.fluid.json.JSONCodecProvider
+import com.github.fluidsonic.fluid.json.JSONDecoder
+import com.github.fluidsonic.fluid.json.JSONException
+import com.github.fluidsonic.fluid.json.JSONReader
+import com.github.fluidsonic.fluid.json.readFromMap
+import com.github.fluidsonic.fluid.json.readFromMapByElementValue
+import io.ktor.application.ApplicationCall
 import io.ktor.application.ApplicationCallPipeline
 import io.ktor.application.ApplicationFeature
 import io.ktor.application.call
 import io.ktor.http.ContentType
+import io.ktor.http.HttpMethod
 import io.ktor.http.Parameters
 import io.ktor.request.ApplicationReceivePipeline
 import io.ktor.request.ApplicationReceiveRequest
 import io.ktor.request.contentCharset
 import io.ktor.request.contentType
+import io.ktor.request.httpMethod
 import io.ktor.util.AttributeKey
+import io.ktor.util.pipeline.PipelineContext
 import io.ktor.util.toMap
 import kotlinx.coroutines.io.ByteReadChannel
 import kotlinx.coroutines.io.jvm.javaio.toInputStream
@@ -24,6 +33,26 @@ internal class BakuCommandRequestFeature<Transaction : BakuTransaction>(
 	override val key = AttributeKey<Unit>("Baku: command request feature")
 
 
+	private fun PipelineContext<ApplicationReceiveRequest, ApplicationCall>.resolveBody(factory: BakuCommandFactory<Transaction, *, *>): ByteReadChannel {
+		val contentType = call.request.contentType().withoutParameters()
+
+		if (contentType.match(ContentType.Application.Json))
+			return call.request.receiveChannel()
+
+		if (methodsAllowedForQueryParameterBody.contains(call.request.httpMethod))
+			call.request.queryParameters["body"]?.let { return ByteReadChannel(it, Charset.defaultCharset()) }
+
+		if (contentType.match(ContentType.Any) && (factory is BakuCommandFactory.Empty<*, *, *> || !call.parameters.isEmpty()))
+			ByteReadChannel(text = "{}", charset = Charsets.UTF_8)
+
+		throw BakuCommandFailure(
+			code = "invalidRequest",
+			developerMessage = "Expected content of type '${ContentType.Application.Json}'",
+			userMessage = BakuCommandFailure.genericUserMessage
+		)
+	}
+
+
 	@Suppress("UNCHECKED_CAST")
 	override fun install(pipeline: ApplicationCallPipeline, configure: Unit.() -> Unit) {
 		Unit.configure()
@@ -32,30 +61,8 @@ internal class BakuCommandRequestFeature<Transaction : BakuTransaction>(
 			val factory = subject.value as? BakuCommandFactory<Transaction, *, *>
 				?: throw BakuCommandFailure(code = "fixme", developerMessage = "FIXME", userMessage = BakuCommandFailure.genericUserMessage) // FIXME
 
-			val contentType = call.request.contentType().withoutParameters()
-
 			val transaction = transaction as Transaction
-			val body = when {
-				contentType.match(ContentType.Application.Json) ->
-					call.request.receiveChannel()
-
-				contentType.match(ContentType.Any) ->
-					if (factory is BakuCommandFactory.Empty<*, *, *> || !call.parameters.isEmpty())
-						ByteReadChannel(text = "{}", charset = Charsets.UTF_8)
-					else
-						throw BakuCommandFailure(
-							code = "invalidRequest",
-							developerMessage = "Expected content of type '${ContentType.Application.Json}'",
-							userMessage = BakuCommandFailure.genericUserMessage
-						)
-
-				else ->
-					throw BakuCommandFailure(
-						code = "unsupportedContentType",
-						developerMessage = "Expected content type '${ContentType.Application.Json}' but got '$contentType'",
-						userMessage = BakuCommandFailure.genericUserMessage
-					)
-			}
+			val body = resolveBody(factory = factory)
 
 			proceedWith(ApplicationReceiveRequest(
 				type = subject.type,
@@ -156,5 +163,11 @@ internal class BakuCommandRequestFeature<Transaction : BakuTransaction>(
 			e.addSuppressed(JSONException.Parsing("… when decoding command '${factory.name}' using ${factory::class.qualifiedName}"))
 			throw e
 		}
+	}
+
+
+	companion object {
+
+		private val methodsAllowedForQueryParameterBody = setOf(HttpMethod.Get, HttpMethod.Head)
 	}
 }
