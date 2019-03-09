@@ -2,7 +2,7 @@ import com.github.fluidsonic.fluid.library.*
 
 plugins {
 	id("com.github.fluidsonic.fluid-library") version "0.9.3"
-	kotlin("kapt") version "1.3.30-eap-11"
+	kotlin("kapt") version "1.3.21"
 }
 
 fluidLibrary {
