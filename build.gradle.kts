@@ -17,7 +17,7 @@ fluidLibraryVariant {
 dependencies {
 	api(fluid("json-annotations", "0.9.15"))
 	api(fluid("json-coding-jdk8", "0.9.15"))
-	api(fluid("mongo", "0.9.3"))
+	api(fluid("mongo", "0.9.4"))
 	api(fluid("stdlib-jdk8", "0.9.1"))
 
 	api(ktor("auth-jwt"))
