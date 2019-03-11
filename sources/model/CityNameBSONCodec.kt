@@ -11,6 +11,6 @@ internal object CityNameBSONCodec : AbstractBSONCodec<CityName, BSONCodingContex
 
 
 	override fun BsonWriter.encode(value: CityName, context: BSONCodingContext) {
-		writeString(value.raw)
+		writeString(value.value)
 	}
 }

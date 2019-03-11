@@ -4,7 +4,7 @@ import com.github.fluidsonic.fluid.json.*
 
 
 @JSON
-inline class LastName(val raw: String) {
+inline class LastName(val value: String) {
 
-	override fun toString() = raw
+	override fun toString() = value
 }

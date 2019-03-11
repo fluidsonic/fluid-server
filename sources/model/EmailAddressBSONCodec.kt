@@ -11,6 +11,6 @@ internal object EmailAddressBSONCodec : AbstractBSONCodec<EmailAddress, BSONCodi
 
 
 	override fun BsonWriter.encode(value: EmailAddress, context: BSONCodingContext) {
-		writeString(value.raw)
+		writeString(value.value)
 	}
 }

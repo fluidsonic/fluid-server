@@ -4,7 +4,7 @@ import com.github.fluidsonic.fluid.json.*
 
 
 @JSON(encoding = JSON.Encoding.none)
-inline class Password(val raw: String) {
+inline class Password(val value: String) {
 
 	override fun toString() =
 		"Password(***)"

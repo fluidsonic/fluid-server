@@ -11,6 +11,6 @@ internal object LastNameBSONCodec : AbstractBSONCodec<LastName, BSONCodingContex
 
 
 	override fun BsonWriter.encode(value: LastName, context: BSONCodingContext) {
-		writeString(value.raw)
+		writeString(value.value)
 	}
 }

@@ -11,6 +11,6 @@ internal object PostalCodeBSONCodec : AbstractBSONCodec<PostalCode, BSONCodingCo
 
 
 	override fun BsonWriter.encode(value: PostalCode, context: BSONCodingContext) {
-		writeString(value.raw)
+		writeString(value.value)
 	}
 }

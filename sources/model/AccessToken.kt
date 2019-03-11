@@ -4,7 +4,7 @@ import com.github.fluidsonic.fluid.json.*
 
 
 @JSON
-inline class AccessToken(val raw: String) {
+inline class AccessToken(val value: String) {
 
-	override fun toString() = raw
+	override fun toString() = value
 }

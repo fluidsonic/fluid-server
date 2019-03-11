@@ -11,6 +11,6 @@ internal object PasswordHashBSONCodec : AbstractBSONCodec<PasswordHash, BSONCodi
 
 
 	override fun BsonWriter.encode(value: PasswordHash, context: BSONCodingContext) {
-		writeString(value.raw)
+		writeString(value.vakue)
 	}
 }

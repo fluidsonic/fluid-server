@@ -4,7 +4,7 @@ import com.github.fluidsonic.fluid.json.*
 
 
 @JSON
-inline class PostalCode(val raw: String) {
+inline class PostalCode(val value: String) {
 
-	override fun toString() = raw
+	override fun toString() = value
 }

@@ -11,6 +11,6 @@ internal object PhoneNumberBSONCodec : AbstractBSONCodec<PhoneNumber, BSONCoding
 
 
 	override fun BsonWriter.encode(value: PhoneNumber, context: BSONCodingContext) {
-		writeString(value.raw)
+		writeString(value.value)
 	}
 }

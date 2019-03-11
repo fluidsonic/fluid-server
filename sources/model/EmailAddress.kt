@@ -4,11 +4,11 @@ import com.github.fluidsonic.fluid.json.*
 
 
 @JSON
-inline class EmailAddress(val raw: String) {
+inline class EmailAddress(val value: String) {
 
 	fun toLowerCase() =
-		EmailAddress(raw.toLowerCase())
+		EmailAddress(value.toLowerCase())
 
 
-	override fun toString() = raw
+	override fun toString() = value
 }

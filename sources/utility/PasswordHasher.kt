@@ -38,7 +38,7 @@ class PasswordHasher(
 
 
 	fun createHash(password: Password) =
-		createHash(password.raw.toCharArray())
+		createHash(password.value.toCharArray())
 
 
 	private fun createHash(password: CharArray): PasswordHash {
@@ -60,11 +60,11 @@ class PasswordHasher(
 
 
 	fun verifyPassword(password: Password, expectedHash: PasswordHash) =
-		verifyPassword(password = password.raw.toCharArray(), expectedHash = expectedHash)
+		verifyPassword(password = password.value.toCharArray(), expectedHash = expectedHash)
 
 
 	private fun verifyPassword(password: CharArray, expectedHash: PasswordHash): Boolean {
-		val params = expectedHash.raw.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+		val params = expectedHash.vakue.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 		if (params.size != HASH_SECTIONS)
 			throw InvalidHashException("Fields are missing from the password hash.")
 

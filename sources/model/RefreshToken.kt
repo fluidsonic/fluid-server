@@ -4,7 +4,7 @@ import com.github.fluidsonic.fluid.json.*
 
 
 @JSON
-inline class RefreshToken(val raw: String) {
+inline class RefreshToken(val value: String) {
 
-	override fun toString() = raw
+	override fun toString() = value
 }
