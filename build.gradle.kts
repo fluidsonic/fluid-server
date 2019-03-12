@@ -7,7 +7,7 @@ plugins {
 
 fluidLibrary {
 	name = "baku"
-	version = "0.9.22"
+	version = "0.9.23"
 }
 
 fluidLibraryVariant {
