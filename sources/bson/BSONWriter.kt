@@ -73,6 +73,22 @@ fun BsonWriter.write(name: String, strings: Iterable<String>) {
 }
 
 
+inline fun <K, V> BsonWriter.write(name: String, value: Map<K, V>, writeEntry: (entry: Map.Entry<K, V>) -> Unit) {
+	writeName(name)
+	writeDocument {
+		value.entries.forEach(writeEntry)
+	}
+}
+
+
+@JvmName("writeOrSkip")
+inline fun <K, V> BsonWriter.write(name: String, valueOrSkip: Map<K, V>?, writeEntry: (entry: Map.Entry<K, V>) -> Unit) {
+	valueOrSkip ?: return
+
+	write(name = name, value = valueOrSkip, writeEntry = writeEntry)
+}
+
+
 fun BsonWriter.write(name: String, stringOrSkip: String?, skipIfEmpty: Boolean = false) {
 	if (stringOrSkip == null || (skipIfEmpty && stringOrSkip.isEmpty())) {
 		return

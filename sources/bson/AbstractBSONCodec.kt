@@ -13,15 +13,13 @@ import kotlin.reflect.KClass
 
 abstract class AbstractBSONCodec<Value : Any, in Context : BSONCodingContext>(
 	private val additionalProviders: List<BSONCodecProvider<Context>> = emptyList(),
-	valueClass: Class<Value>? = null
+	valueClass: Class<Value>? = null,
+	private val includesSubclasses: Boolean = false
 ) : BSONCodec<Value, Context> {
 
 	private var context: Context? = null
 	private var rootRegistry: CodecRegistry? = null
-
-	@Suppress("UNCHECKED_CAST")
-	private val valueClass = valueClass
-		?: (this::class.java.genericSuperclass as ParameterizedType).actualTypeArguments.first() as Class<Value>
+	private val valueClass = valueClass ?: defaultValueClass(this::class)
 
 
 	abstract fun BsonReader.decode(context: Context): Value
@@ -29,17 +27,14 @@ abstract class AbstractBSONCodec<Value : Any, in Context : BSONCodingContext>(
 
 
 	final override fun <Value : Any> codecForClass(valueClass: KClass<in Value>): BSONCodec<Value, Context>? {
-		var codec = super.codecForClass(valueClass)
-		if (codec != null) {
-			return codec
-		}
+		super.codecForClass(valueClass)?.let { return it }
 
-		for (provider in additionalProviders) {
-			codec = provider.codecForClass(valueClass)
-			if (codec != null) {
-				return codec
-			}
-		}
+		@Suppress("UNCHECKED_CAST")
+		if (includesSubclasses && this.valueClass.isAssignableFrom(valueClass.java))
+			return this as BSONCodec<Value, Context>
+
+		for (provider in additionalProviders)
+			provider.codecForClass(valueClass)?.let { return it }
 
 		return null
 	}
@@ -183,5 +178,16 @@ abstract class AbstractBSONCodec<Value : Any, in Context : BSONCodingContext>(
 
 		private val decoderContext = DecoderContext.builder().build()!!
 		private val encoderContext = EncoderContext.builder().build()!!
+	}
+}
+
+
+@Suppress("UNCHECKED_CAST")
+private fun <Value : Any> defaultValueClass(codecClass: KClass<out AbstractBSONCodec<Value, *>>): Class<Value> {
+	val typeArgument = (codecClass.java.genericSuperclass as ParameterizedType).actualTypeArguments.first()
+	return when (typeArgument) {
+		is Class<*> -> typeArgument as Class<Value>
+		is ParameterizedType -> typeArgument.rawType as Class<Value>
+		else -> error("unsupported type: $typeArgument")
 	}
 }

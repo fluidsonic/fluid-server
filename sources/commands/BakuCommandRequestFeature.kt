@@ -1,11 +1,6 @@
 package com.github.fluidsonic.baku
 
-import com.github.fluidsonic.fluid.json.JSONCodecProvider
-import com.github.fluidsonic.fluid.json.JSONDecoder
-import com.github.fluidsonic.fluid.json.JSONException
-import com.github.fluidsonic.fluid.json.JSONReader
-import com.github.fluidsonic.fluid.json.readFromMap
-import com.github.fluidsonic.fluid.json.readFromMapByElementValue
+import com.github.fluidsonic.fluid.json.*
 import io.ktor.application.ApplicationCall
 import io.ktor.application.ApplicationCallPipeline
 import io.ktor.application.ApplicationFeature
@@ -85,7 +80,7 @@ internal class BakuCommandRequestFeature<Transaction : BakuTransaction>(
 		parameters: Parameters,
 		factory: BakuCommandFactory<Transaction, *, *>
 	): BakuCommandRequest {
-		val reader = JSONReader.build(body.toInputStream().reader(charset = charset))
+		val reader = JSONReader.build(body.toInputStream().reader(charset = charset)) // FIXME blocking
 
 		try {
 			var command: BakuCommand? = null

@@ -1,8 +1,7 @@
 package com.github.fluidsonic.baku
 
-import com.github.fluidsonic.fluid.json.JSONCodecProvider
-import com.github.fluidsonic.fluid.json.extended
-import com.github.fluidsonic.fluid.mongo.MongoClients
+import com.github.fluidsonic.fluid.json.*
+import com.github.fluidsonic.fluid.mongo.*
 import io.ktor.application.Application
 import io.ktor.application.ApplicationStarting
 import io.ktor.application.call
