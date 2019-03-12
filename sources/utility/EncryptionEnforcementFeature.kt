@@ -16,13 +16,12 @@ internal object EncryptionEnforcementFeature : ApplicationFeature<ApplicationCal
 		Unit.configure()
 
 		pipeline.intercept(ApplicationCallPipeline.Features) {
-			if (call.request.origin.scheme == "http") {
+			if (call.request.origin.scheme != "https")
 				throw BakuCommandFailure(
 					code = "encryptedConnectionRequired",
 					userMessage = BakuCommandFailure.genericUserMessage,
 					developerMessage = "This API must only be used over an encrypted connection."
 				)
-			}
 		}
 	}
 }
