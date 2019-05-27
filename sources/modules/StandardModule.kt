@@ -29,7 +29,7 @@ internal object StandardModule : BakuModule<BakuContext, BakuTransaction>() {
 			CurrencyJSONCodec,
 			UrlJSONCodec,
 			JSONCodecProvider.generated(BakuJSONCodecProvider::class),
-			EnumJSONCodecProvider(transformation = EnumJSONTransformation.ToString(EnumJSONTransformation.Case.`lowercase words`))
+			EnumJSONCodecProvider(transformation = EnumJSONTransformation.ToString(EnumJSONTransformation.Case.lowercase_words))
 		)
 	}
 }
