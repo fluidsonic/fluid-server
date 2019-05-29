@@ -38,7 +38,7 @@ internal class BakuCommandRequestFeature<Transaction : BakuTransaction>(
 			call.request.queryParameters["body"]?.let { return ByteReadChannel(it, Charset.defaultCharset()) }
 
 		if (contentType.match(ContentType.Any) && (factory is BakuCommandFactory.Empty<*, *, *> || !call.parameters.isEmpty()))
-			ByteReadChannel(text = "{}", charset = Charsets.UTF_8)
+			return ByteReadChannel(text = "{}", charset = Charsets.UTF_8)
 
 		throw BakuCommandFailure(
 			code = "invalidRequest",
