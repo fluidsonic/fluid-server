@@ -20,7 +20,7 @@ dependencies {
 	api(fluid("json-annotations", "0.9.21"))
 	api(fluid("json-coding-jdk8", "0.9.21"))
 	api(fluid("mongo", "0.9.5"))
-	api(fluid("stdlib", "0.9.14"))
+	api(fluid("stdlib", "0.9.15"))
 
 	api(ktor("auth-jwt"))
 	api(ktor("server-netty"))
