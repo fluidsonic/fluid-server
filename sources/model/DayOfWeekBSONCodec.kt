@@ -1,8 +1,7 @@
 package com.github.fluidsonic.baku
 
-import org.bson.BsonReader
-import org.bson.BsonWriter
-import java.time.DayOfWeek
+import org.bson.*
+import java.time.*
 
 
 internal object DayOfWeekBSONCodec : AbstractBSONCodec<DayOfWeek, BSONCodingContext>() {

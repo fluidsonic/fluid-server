@@ -2,30 +2,22 @@ package com.github.fluidsonic.baku
 
 import com.github.fluidsonic.fluid.json.*
 import com.github.fluidsonic.fluid.mongo.*
-import io.ktor.application.Application
-import io.ktor.application.ApplicationStarting
-import io.ktor.application.call
-import io.ktor.application.install
-import io.ktor.features.CORS
-import io.ktor.features.CallLogging
-import io.ktor.features.DefaultHeaders
-import io.ktor.features.XForwardedHeaderSupport
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
-import io.ktor.request.ApplicationReceiveRequest
-import io.ktor.response.respond
-import io.ktor.routing.Route
-import io.ktor.routing.routing
-import io.ktor.server.engine.commandLineEnvironment
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.runBlocking
-import org.bson.codecs.configuration.CodecConfigurationException
-import org.bson.codecs.configuration.CodecRegistries
-import org.bson.codecs.configuration.CodecRegistry
-import org.slf4j.event.Level
-import kotlin.reflect.KClass
+import io.ktor.application.*
+import io.ktor.features.*
+import io.ktor.http.*
+import io.ktor.request.*
+import io.ktor.response.*
+import io.ktor.routing.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.*
+import org.bson.codecs.configuration.*
+import org.slf4j.event.*
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.set
+import kotlin.reflect.*
 
 
 class Baku internal constructor() {

@@ -1,10 +1,7 @@
 package com.github.fluidsonic.baku
 
-import org.bson.AbstractBsonReader
-import org.bson.AbstractBsonReader.State
-import org.bson.BsonInvalidOperationException
-import org.bson.BsonReader
-import org.bson.BsonType
+import org.bson.*
+import org.bson.AbstractBsonReader.*
 
 
 fun BsonReader.expectValue(methodName: String) {

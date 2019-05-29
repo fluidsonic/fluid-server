@@ -1,26 +1,17 @@
 package com.github.fluidsonic.baku
 
 import com.github.fluidsonic.fluid.json.*
-import io.ktor.application.ApplicationCall
-import io.ktor.application.ApplicationCallPipeline
-import io.ktor.application.ApplicationFeature
-import io.ktor.application.call
-import io.ktor.auth.UnauthorizedResponse
+import io.ktor.application.*
+import io.ktor.auth.*
 import io.ktor.client.utils.CacheControl
-import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.content.WriterContent
-import io.ktor.http.withCharset
-import io.ktor.request.httpMethod
-import io.ktor.request.uri
-import io.ktor.response.ApplicationSendPipeline
-import io.ktor.response.header
-import io.ktor.response.respond
-import io.ktor.util.AttributeKey
-import io.ktor.util.pipeline.PipelineContext
-import kotlinx.coroutines.coroutineScope
-import org.slf4j.LoggerFactory
+import io.ktor.http.*
+import io.ktor.http.content.*
+import io.ktor.request.*
+import io.ktor.response.*
+import io.ktor.util.*
+import io.ktor.util.pipeline.*
+import kotlinx.coroutines.*
+import org.slf4j.*
 
 
 internal object BakuCommandFailureFeature : ApplicationFeature<ApplicationCallPipeline, Unit, Unit> {

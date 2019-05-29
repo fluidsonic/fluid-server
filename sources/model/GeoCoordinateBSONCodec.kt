@@ -1,8 +1,7 @@
 package com.github.fluidsonic.baku
 
 import com.github.fluidsonic.fluid.stdlib.*
-import org.bson.BsonReader
-import org.bson.BsonWriter
+import org.bson.*
 
 
 internal object GeoCoordinateBSONCodec : AbstractBSONCodec<GeoCoordinate, BSONCodingContext>() {

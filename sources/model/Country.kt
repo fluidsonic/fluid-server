@@ -1,6 +1,6 @@
 package com.github.fluidsonic.baku
 
-import java.util.Locale
+import java.util.*
 
 
 // FIXME add all countries

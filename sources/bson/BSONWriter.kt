@@ -1,6 +1,6 @@
 package com.github.fluidsonic.baku
 
-import org.bson.BsonWriter
+import org.bson.*
 
 
 fun BsonWriter.write(name: String, boolean: Boolean) {

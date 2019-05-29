@@ -1,10 +1,8 @@
 package com.github.fluidsonic.baku
 
-import io.ktor.application.ApplicationCallPipeline
-import io.ktor.application.ApplicationFeature
-import io.ktor.application.call
-import io.ktor.features.origin
-import io.ktor.util.AttributeKey
+import io.ktor.application.*
+import io.ktor.features.*
+import io.ktor.util.*
 
 
 internal object EncryptionEnforcementFeature : ApplicationFeature<ApplicationCallPipeline, Unit, Unit> {

@@ -1,6 +1,6 @@
 package com.github.fluidsonic.baku
 
-import kotlin.reflect.KClass
+import kotlin.reflect.*
 
 
 interface BSONCodecProvider<in Context : BSONCodingContext> {

@@ -1,8 +1,7 @@
 package com.github.fluidsonic.baku
 
-import org.bson.BsonReader
-import org.bson.BsonWriter
-import java.util.Currency
+import org.bson.*
+import java.util.*
 
 
 internal object CurrencyBSONCodec : AbstractBSONCodec<Currency, BSONCodingContext>() {

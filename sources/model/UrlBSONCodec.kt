@@ -1,8 +1,7 @@
 package com.github.fluidsonic.baku
 
-import io.ktor.http.Url
-import org.bson.BsonReader
-import org.bson.BsonWriter
+import io.ktor.http.*
+import org.bson.*
 
 
 internal object UrlBSONCodec : AbstractBSONCodec<Url, BSONCodingContext>() {

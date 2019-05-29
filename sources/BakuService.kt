@@ -1,6 +1,6 @@
 package com.github.fluidsonic.baku
 
-import io.ktor.application.ApplicationCall
+import io.ktor.application.*
 
 
 interface BakuService<Context : BakuContext, Transaction : BakuTransaction> {

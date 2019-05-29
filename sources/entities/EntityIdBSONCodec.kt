@@ -1,7 +1,6 @@
 package com.github.fluidsonic.baku
 
-import org.bson.BsonReader
-import org.bson.BsonWriter
+import org.bson.*
 
 
 internal class EntityIdBSONCodec<Id : EntityId>(

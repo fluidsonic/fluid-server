@@ -1,7 +1,7 @@
 package com.github.fluidsonic.baku
 
 import com.github.fluidsonic.fluid.json.*
-import java.util.Currency
+import java.util.*
 
 
 internal object CurrencyJSONCodec : AbstractJSONCodec<Currency, JSONCodingContext>() {

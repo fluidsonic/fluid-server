@@ -1,9 +1,8 @@
 package com.github.fluidsonic.baku
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.flatMap
-import kotlin.reflect.KClass
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.*
+import kotlin.reflect.*
 
 
 internal class EntityResolver<Transaction : BakuTransaction>(

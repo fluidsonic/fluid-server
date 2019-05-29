@@ -1,7 +1,6 @@
 package com.github.fluidsonic.baku
 
-import io.ktor.http.URLBuilder
-import io.ktor.http.encodeURLQueryComponent
+import io.ktor.http.*
 
 
 fun URLBuilder.appendPath(vararg components: String) =

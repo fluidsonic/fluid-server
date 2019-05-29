@@ -1,9 +1,8 @@
 package com.github.fluidsonic.baku
 
-import org.bson.BsonReader
-import org.bson.BsonWriter
-import org.bson.types.ObjectId
-import kotlin.reflect.KClass
+import org.bson.*
+import org.bson.types.*
+import kotlin.reflect.*
 
 
 interface EntityId {

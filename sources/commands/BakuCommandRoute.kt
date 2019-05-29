@@ -1,6 +1,6 @@
 package com.github.fluidsonic.baku
 
-import io.ktor.routing.Route
+import io.ktor.routing.*
 
 
 internal class BakuCommandRoute<in Transaction : BakuTransaction>(
