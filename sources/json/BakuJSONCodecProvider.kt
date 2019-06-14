@@ -6,6 +6,9 @@ import com.github.fluidsonic.fluid.stdlib.*
 
 @JSON.CodecProvider(
 	externalTypes = [
+		JSON.ExternalType(Cents::class, JSON(
+			representation = JSON.Representation.singleValue
+		)),
 		JSON.ExternalType(GeoCoordinate::class)
 	]
 )

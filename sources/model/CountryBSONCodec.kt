@@ -1,5 +1,6 @@
 package com.github.fluidsonic.baku
 
+import com.github.fluidsonic.fluid.stdlib.*
 import org.bson.*
 
 

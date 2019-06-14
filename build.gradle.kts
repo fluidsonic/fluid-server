@@ -1,7 +1,7 @@
 import com.github.fluidsonic.fluid.library.*
 
 plugins {
-	id("com.github.fluidsonic.fluid-library") version "0.9.13"
+	id("com.github.fluidsonic.fluid-library") version "0.9.16"
 	kotlin("jvm") version "1.3.31"
 	kotlin("kapt") version "1.3.31"
 }
@@ -20,7 +20,7 @@ dependencies {
 	api(fluid("json-annotations", "0.9.21"))
 	api(fluid("json-coding-jdk8", "0.9.21"))
 	api(fluid("mongo", "0.9.5"))
-	api(fluid("stdlib", "0.9.15"))
+	api(fluid("stdlib", "0.9.22"))
 
 	api(ktor("auth-jwt"))
 	api(ktor("server-netty"))
