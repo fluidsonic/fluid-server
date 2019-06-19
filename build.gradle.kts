@@ -17,8 +17,8 @@ fluidJvmLibraryVariant {
 }
 
 dependencies {
-	api(fluid("json-annotations", "0.9.21"))
-	api(fluid("json-coding-jdk8", "0.9.21"))
+	api(fluid("json-annotations", "0.9.22"))
+	api(fluid("json-coding-jdk8", "0.9.22"))
 	api(fluid("mongo", "0.9.5"))
 	api(fluid("stdlib", "0.9.22"))
 
@@ -27,11 +27,16 @@ dependencies {
 
 	implementation("ch.qos.logback:logback-classic:1.2.1")
 
-	kapt(fluid("json-annotation-processor", "0.9.21"))
+	kapt(fluid("json-annotation-processor", "0.9.22"))
 }
 
 repositories {
 	bintray("kotlin/ktor")
+}
+
+// https://youtrack.jetbrains.com/issue/KT-31641
+configurations.getByName("kapt") {
+	attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, "java-runtime"))
 }
 
 
