@@ -1,9 +1,9 @@
 import com.github.fluidsonic.fluid.library.*
 
 plugins {
-	id("com.github.fluidsonic.fluid-library") version "0.9.16"
-	kotlin("jvm") version "1.3.31"
-	kotlin("kapt") version "1.3.31"
+	id("com.github.fluidsonic.fluid-library") version "0.9.19"
+	kotlin("jvm") version "1.3.40"
+	kotlin("kapt") version "1.3.40"
 }
 
 fluidJvmLibrary {
@@ -17,17 +17,17 @@ fluidJvmLibraryVariant {
 }
 
 dependencies {
-	api(fluid("json-annotations", "0.9.22"))
-	api(fluid("json-coding-jdk8", "0.9.22"))
+	api(fluid("json-annotations", "0.9.23"))
+	api(fluid("json-coding-jdk8", "0.9.23"))
 	api(fluid("mongo", "0.9.5"))
-	api(fluid("stdlib", "0.9.22"))
+	api(fluid("stdlib", "0.9.23"))
 
 	api(ktor("auth-jwt"))
 	api(ktor("server-netty"))
 
 	implementation("ch.qos.logback:logback-classic:1.2.1")
 
-	kapt(fluid("json-annotation-processor", "0.9.22"))
+	kapt(fluid("json-annotation-processor", "0.9.23"))
 }
 
 repositories {
