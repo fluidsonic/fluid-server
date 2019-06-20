@@ -19,7 +19,7 @@ fluidJvmLibraryVariant {
 dependencies {
 	api(fluid("json-annotations", "0.9.23"))
 	api(fluid("json-coding-jdk8", "0.9.23"))
-	api(fluid("mongo", "0.9.6"))
+	api(fluid("mongo", "0.9.7"))
 	api(fluid("stdlib", "0.9.23"))
 
 	api(ktor("auth-jwt"))
@@ -41,5 +41,5 @@ configurations.getByName("kapt") {
 
 
 @Suppress("unused")
-fun DependencyHandler.ktor(name: String, version: String = "1.2.1") =
+fun DependencyHandler.ktor(name: String, version: String = "1.2.2") =
 	"io.ktor:ktor-$name:$version"
