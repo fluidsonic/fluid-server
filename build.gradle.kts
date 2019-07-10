@@ -1,9 +1,9 @@
 import com.github.fluidsonic.fluid.library.*
 
 plugins {
-	id("com.github.fluidsonic.fluid-library") version "0.9.19"
-	kotlin("jvm") version "1.3.40"
-	kotlin("kapt") version "1.3.40"
+	id("com.github.fluidsonic.fluid-library") version "0.9.21"
+	kotlin("jvm") version "1.3.41"
+	kotlin("kapt") version "1.3.41"
 }
 
 fluidJvmLibrary {
@@ -13,21 +13,21 @@ fluidJvmLibrary {
 
 fluidJvmLibraryVariant {
 	description = "helps you focus your REST API back-end on the business logic"
-	jdk = JDK.v1_8
+	jdk = JvmTarget.jdk8
 }
 
 dependencies {
-	api(fluid("json-annotations", "0.9.23"))
-	api(fluid("json-coding-jdk8", "0.9.23"))
-	api(fluid("mongo", "0.9.7"))
-	api(fluid("stdlib", "0.9.23"))
+	api(fluid("json-annotations", "0.9.24"))
+	api(fluid("json-coding-jdk8", "0.9.24"))
+	api(fluid("mongo", "0.9.8"))
+	api(fluid("stdlib", "0.9.24"))
 
 	api(ktor("auth-jwt"))
 	api(ktor("server-netty"))
 
 	implementation("ch.qos.logback:logback-classic:1.2.1")
 
-	kapt(fluid("json-annotation-processor", "0.9.23"))
+	kapt(fluid("json-annotation-processor", "0.9.24"))
 }
 
 repositories {
