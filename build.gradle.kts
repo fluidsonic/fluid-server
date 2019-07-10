@@ -8,7 +8,7 @@ plugins {
 
 fluidJvmLibrary {
 	name = "baku"
-	version = "0.9.30"
+	version = "0.9.31"
 }
 
 fluidJvmLibraryVariant {
