@@ -24,11 +24,8 @@ internal class BakuCommandResponseFeature<Transaction : BakuTransaction>(
 		Unit.configure()
 
 		pipeline.sendPipeline.intercept(ApplicationSendPipeline.Render) { subject ->
-			subject !is OutgoingContent
-				|| return@intercept
-
 			val response = subject as? BakuCommandResponse
-				?: throw BakuCommandFailure(code = "fixme", developerMessage = "FIXME", userMessage = BakuCommandFailure.genericUserMessage) // FIXME
+				?: return@intercept
 
 			call.response.header(HttpHeaders.CacheControl, CacheControl.NO_CACHE)
 

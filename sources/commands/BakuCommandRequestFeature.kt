@@ -44,7 +44,7 @@ internal class BakuCommandRequestFeature<Transaction : BakuTransaction>(
 
 		pipeline.receivePipeline.intercept(ApplicationReceivePipeline.Transform) { subject ->
 			val factory = subject.value as? BakuCommandFactory<Transaction, *, *>
-				?: throw BakuCommandFailure(code = "fixme", developerMessage = "FIXME", userMessage = BakuCommandFailure.genericUserMessage) // FIXME
+				?: return@intercept
 
 			val transaction = transaction as Transaction
 			val body = resolveBody(factory = factory)
