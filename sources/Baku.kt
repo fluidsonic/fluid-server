@@ -24,23 +24,23 @@ class Baku internal constructor() {
 
 	class Builder<Context : BakuContext, Transaction : BakuTransaction> internal constructor() {
 
-		private val environment = commandLineEnvironment(arrayOf())
+		private var environment: BakuEnvironment<Context, Transaction>? = null
+		private val ktorEnvironment = commandLineEnvironment(arrayOf())
 		private var modules: List<BakuModule<in Context, in Transaction>>? = null
 		private val providerBasedBSONCodecRegistry = ProviderBasedBSONCodecRegistry<Context>()
-		private var service: BakuService<Context, Transaction>? = null
 
 		val bsonCodecRegistry = CodecRegistries.fromRegistries(
 			MongoClients.defaultCodecRegistry,
 			providerBasedBSONCodecRegistry
 		)!!
 
-		val config = environment.config
+		val config = ktorEnvironment.config
 
 
 		internal fun build(): Baku {
 			// create engine before monitoring the start event because Netty's subscriptions must be processed first
-			val engine = embeddedServer(Netty, environment)
-			val subscription = environment.monitor.subscribe(ApplicationStarting) { application ->
+			val engine = embeddedServer(Netty, ktorEnvironment)
+			val subscription = ktorEnvironment.monitor.subscribe(ApplicationStarting) { application ->
 				application.apply {
 					configureBasics()
 					configureModules()
@@ -54,9 +54,9 @@ class Baku internal constructor() {
 		}
 
 
-		internal fun configure(assemble: suspend Builder<Context, Transaction>.() -> BakuService<Context, Transaction>) {
+		internal fun configure(assemble: suspend Builder<Context, Transaction>.() -> BakuEnvironment<Context, Transaction>) {
 			runBlocking {
-				service = assemble()
+				environment = assemble()
 			}
 		}
 
@@ -93,12 +93,12 @@ class Baku internal constructor() {
 
 
 		private fun Application.configureModules() {
+			val environment = this@Builder.environment!!
 			val modules = (modules ?: error("modules() must be specified")) + StandardModule
-			val service = service!!
 
 			val configurations = modules.map { it.configure() }
 
-			val context = runBlocking { service.createContext() }
+			val context = runBlocking { environment.createContext() }
 			val idFactoriesByType = configurations.flatMap { it.idFactories }.associateBy { it.type }
 
 			val bsonCodecProviders: MutableList<BSONCodecProvider<Context>> = mutableListOf()
@@ -136,8 +136,8 @@ class Baku internal constructor() {
 			configurations.forEach { it.customConfigurations.forEach { it() } }
 
 			install(BakuTransactionFeature(
-				service = service,
-				context = context
+				context = context,
+				environment = environment
 			))
 
 			install(BakuCommandFailureFeature)
@@ -212,7 +212,7 @@ class Baku internal constructor() {
 			}
 
 			runBlocking {
-				service.onStart(context = context) // TODO we could make BakuContext and BakuService one thing
+				environment.onStart(context = context) // TODO we could make BakuContext and BakuService one thing
 			}
 		}
 	}
@@ -238,7 +238,7 @@ class Baku internal constructor() {
 
 
 fun <Context : BakuContext, Transaction : BakuTransaction> baku(
-	assemble: suspend Baku.Builder<Context, Transaction>.() -> BakuService<Context, Transaction>
+	assemble: suspend Baku.Builder<Context, Transaction>.() -> BakuEnvironment<Context, Transaction>
 ) {
 	Baku.Builder<Context, Transaction>().apply { configure(assemble) }.build()
 }

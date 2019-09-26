@@ -5,8 +5,8 @@ import io.ktor.util.*
 
 
 internal class BakuTransactionFeature<Context : BakuContext, Transaction : BakuTransaction>(
-	private val service: BakuService<Context, Transaction>,
-	private val context: Context
+	private val context: Context,
+	private val environment: BakuEnvironment<Context, Transaction>
 ) : ApplicationFeature<ApplicationCallPipeline, Unit, Unit> {
 
 	override val key = AttributeKey<Unit>("Baku: transaction feature")
@@ -17,7 +17,7 @@ internal class BakuTransactionFeature<Context : BakuContext, Transaction : BakuT
 		Unit.configure()
 
 		pipeline.intercept(ApplicationCallPipeline.Setup) {
-			call.attributes.put(transactionAttributeKey, service.createTransaction(context = this@BakuTransactionFeature.context, call = call))
+			call.attributes.put(transactionAttributeKey, environment.createTransaction(context = this@BakuTransactionFeature.context, call = call))
 		}
 	}
 
