@@ -53,5 +53,5 @@ configurations {
 
 
 @Suppress("unused")
-fun DependencyHandler.ktor(name: String, version: String = "1.2.3") =
+fun DependencyHandler.ktor(name: String, version: String = "1.2.4") =
 	"io.ktor:ktor-$name:$version"

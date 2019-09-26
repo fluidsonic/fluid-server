@@ -78,10 +78,10 @@ class Baku internal constructor() {
 			}
 
 			install(CORS) {
+				allowNonSimpleContentTypes = true
+
 				anyHost()
 				exposeHeader(HttpHeaders.WWWAuthenticate)
-				header(HttpHeaders.Accept) // https://github.com/ktorio/ktor/issues/939
-				header(HttpHeaders.AcceptLanguage) // https://github.com/ktorio/ktor/issues/939
 				header(HttpHeaders.Authorization)
 				method(HttpMethod.Delete)
 				method(HttpMethod.Patch)
