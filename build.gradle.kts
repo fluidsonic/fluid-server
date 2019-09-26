@@ -21,7 +21,7 @@ dependencies {
 	api(fluid("json-annotations", "0.9.25"))
 	api(fluid("json-coding-jdk8", "0.9.25"))
 	api(fluid("mongo", "0.9.9"))
-	api(fluid("stdlib", "0.9.25")) {
+	api(fluid("stdlib", "0.9.26")) {
 		attributes {
 			attribute(KotlinPlatformType.attribute, KotlinPlatformType.jvm)
 			attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, Usage.JAVA_RUNTIME))
