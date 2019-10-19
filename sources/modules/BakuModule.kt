@@ -1,4 +1,4 @@
-package com.github.fluidsonic.baku
+package io.fluidsonic.server
 
 import io.ktor.application.*
 import io.ktor.util.pipeline.*

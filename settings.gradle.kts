@@ -1,8 +1,3 @@
-pluginManagement {
-	repositories {
-		gradlePluginPortal()
-		maven("https://dl.bintray.com/fluidsonic/maven")
-	}
-}
+rootProject.name = "fluid-server"
 
-rootProject.name = "baku"
+enableFeaturePreview("GRADLE_METADATA")

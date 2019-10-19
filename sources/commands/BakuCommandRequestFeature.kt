@@ -1,6 +1,6 @@
-package com.github.fluidsonic.baku
+package io.fluidsonic.server
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*
@@ -12,7 +12,7 @@ import java.nio.charset.*
 
 
 internal class BakuCommandRequestFeature<Transaction : BakuTransaction>(
-	private val jsonCodecProvider: JSONCodecProvider<Transaction>
+	private val jsonCodecProvider: JsonCodecProvider<Transaction>
 ) : ApplicationFeature<ApplicationCallPipeline, Unit, Unit> {
 
 	override val key = AttributeKey<Unit>("Baku: command request feature")
@@ -70,7 +70,7 @@ internal class BakuCommandRequestFeature<Transaction : BakuTransaction>(
 		parameters: Parameters,
 		factory: BakuCommandFactory<Transaction, *, *>
 	): BakuCommandRequest {
-		val reader = JSONReader.build(body.toInputStream().reader(charset = charset)) // FIXME blocking
+		val reader = JsonReader.build(body.toInputStream().reader(charset = charset)) // FIXME blocking
 
 		try {
 			var command: BakuCommand? = null
@@ -91,7 +91,7 @@ internal class BakuCommandRequestFeature<Transaction : BakuTransaction>(
 					factory.createCommand()
 				}
 				else {
-					JSONReader.build("""{"command":{}}""").run {
+					JsonReader.build("""{"command":{}}""").run {
 						readFromMap {
 							readMapKey()
 							readCommand(
@@ -108,8 +108,8 @@ internal class BakuCommandRequestFeature<Transaction : BakuTransaction>(
 				command = command!!
 			)
 		}
-		catch (e: JSONException) {
-			if (e is JSONException.Schema || e is JSONException.Syntax) {
+		catch (e: JsonException) {
+			if (e is JsonException.Schema || e is JsonException.Syntax) {
 				throw BakuCommandFailure(
 					code = "invalidRequest",
 					developerMessage = e.message,
@@ -123,20 +123,20 @@ internal class BakuCommandRequestFeature<Transaction : BakuTransaction>(
 	}
 
 
-	private fun JSONReader.readCommand(
+	private fun JsonReader.readCommand(
 		factory: BakuCommandFactory<Transaction, *, *>,
 		parameters: Parameters,
 		transaction: Transaction
 	): BakuCommand {
 		var commandReader = this
 		if (!parameters.isEmpty()) {
-			commandReader = PropertyInjectingJSONReader(
+			commandReader = PropertyInjectingJsonReader(
 				properties = parameters.toMap().mapValues { it.value.single() },
 				source = commandReader
 			)
 		}
 
-		val decoder = JSONDecoder.builder(transaction)
+		val decoder = JsonDecoder.builder(transaction)
 			.codecs(jsonCodecProvider)
 			.source(commandReader)
 			.build()
@@ -144,8 +144,8 @@ internal class BakuCommandRequestFeature<Transaction : BakuTransaction>(
 		return try {
 			factory.run { decoder.decodeCommand() }
 		}
-		catch (e: JSONException) {
-			e.addSuppressed(JSONException.Parsing("… when decoding command '${factory.name}' using ${factory::class.qualifiedName}"))
+		catch (e: JsonException) {
+			e.addSuppressed(JsonException.Parsing("… when decoding command '${factory.name}' using ${factory::class.qualifiedName}"))
 			throw e
 		}
 	}

@@ -1,4 +1,4 @@
-package com.github.fluidsonic.baku
+package io.fluidsonic.server
 
 
 inline class TypedId(val untyped: EntityId) {

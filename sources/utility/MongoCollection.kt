@@ -1,8 +1,8 @@
-package com.github.fluidsonic.baku
+package io.fluidsonic.server
 
-import com.github.fluidsonic.fluid.mongo.*
 import com.mongodb.client.model.*
 import com.mongodb.client.model.Filters.*
+import io.fluidsonic.mongo.*
 import org.bson.conversions.*
 
 

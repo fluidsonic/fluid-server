@@ -1,9 +1,9 @@
-package com.github.fluidsonic.baku
+package io.fluidsonic.server
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON
+@Json
 inline class FirstName(val value: String) {
 
 	override fun toString() = value

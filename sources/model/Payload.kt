@@ -1,4 +1,4 @@
-package com.github.fluidsonic.baku
+package io.fluidsonic.server
 
 
 class Payload private constructor(val rawValue: Any) { // TODO refactor

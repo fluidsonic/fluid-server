@@ -1,6 +1,6 @@
-package com.github.fluidsonic.baku
+package io.fluidsonic.server
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
 internal object StandardModule : BakuModule<BakuContext, BakuTransaction>() {
@@ -25,11 +25,11 @@ internal object StandardModule : BakuModule<BakuContext, BakuTransaction>() {
 		)
 
 		json(
-			CountryJSONCodec,
-			CurrencyJSONCodec,
-			UrlJSONCodec,
-			JSONCodecProvider.generated(BakuJSONCodecProvider::class),
-			EnumJSONCodecProvider(transformation = EnumJSONTransformation.ToString(EnumJSONTransformation.Case.lowercase_words))
+			CountryJsonCodec,
+			CurrencyJsonCodec,
+			UrlJsonCodec,
+			JsonCodecProvider.generated(BakuJsonCodecProvider::class),
+			EnumJsonCodecProvider(transformation = EnumJsonTransformation.ToString(EnumJsonTransformation.Case.lowercase_words))
 		)
 	}
 }

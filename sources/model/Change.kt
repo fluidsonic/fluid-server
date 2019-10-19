@@ -1,7 +1,7 @@
-package com.github.fluidsonic.baku
+package io.fluidsonic.server
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON(representation = JSON.Representation.singleValue)
+@Json(representation = Json.Representation.singleValue)
 data class Change<Value>(val value: Value)

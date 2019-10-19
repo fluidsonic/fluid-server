@@ -1,6 +1,6 @@
-package com.github.fluidsonic.baku
+package io.fluidsonic.server
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import io.ktor.application.*
 import io.ktor.client.utils.CacheControl
 import io.ktor.http.*
@@ -11,8 +11,8 @@ import java.io.*
 
 
 internal class BakuCommandResponseFeature<Transaction : BakuTransaction>(
-	private val additionalEncodings: List<JSONEncoder<Transaction>.() -> Unit>,
-	private val codecProvider: JSONCodecProvider<Transaction>,
+	private val additionalEncodings: List<JsonEncoder<Transaction>.() -> Unit>,
+	private val codecProvider: JsonCodecProvider<Transaction>,
 	private val entityResolver: EntityResolver<Transaction>
 ) : ApplicationFeature<ApplicationCallPipeline, Unit, Unit> {
 
@@ -45,7 +45,7 @@ internal class BakuCommandResponseFeature<Transaction : BakuTransaction>(
 		val factory = response.factory as BakuCommandFactory<Transaction, *, Any>
 		val writer = StringWriter()
 
-		BakuEntityResolvingJSONEncoder(
+		BakuEntityResolvingJsonEncoder(
 			codecProvider = codecProvider,
 			context = transaction,
 			entityResolver = entityResolver,
@@ -59,8 +59,8 @@ internal class BakuCommandResponseFeature<Transaction : BakuTransaction>(
 				try {
 					factory.run { encodeResult(response.result) }
 				}
-				catch (e: JSONException) {
-					e.addSuppressed(JSONException.Serialization("… when encoding result of command '${factory.name}' using ${factory::class.qualifiedName}"))
+				catch (e: JsonException) {
+					e.addSuppressed(JsonException.Serialization("… when encoding result of command '${factory.name}' using ${factory::class.qualifiedName}"))
 					throw e
 				}
 			}

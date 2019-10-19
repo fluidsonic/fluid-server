@@ -1,12 +1,12 @@
-package com.github.fluidsonic.baku
+package io.fluidsonic.server
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-internal class PropertyInjectingJSONReader(
+internal class PropertyInjectingJsonReader(
 	properties: Map<String, String>,
-	private val source: JSONReader
-) : JSONReader {
+	private val source: JsonReader
+) : JsonReader {
 
 	private var currentProperty: Map.Entry<String, String>? = null
 	private var currentPropertyKeyRead = false
@@ -18,7 +18,7 @@ internal class PropertyInjectingJSONReader(
 	private var valueIsolationCount = 0
 
 
-	override fun beginValueIsolation(): JSONDepth {
+	override fun beginValueIsolation(): JsonDepth {
 		val nextToken = nextToken // loads currentProperty
 
 		return if (currentProperty != null) {
@@ -44,7 +44,7 @@ internal class PropertyInjectingJSONReader(
 		get() = source.depth
 
 
-	override fun endValueIsolation(depth: JSONDepth) {
+	override fun endValueIsolation(depth: JsonDepth) {
 		if (currentProperty != null || isRightAfterCustomProperty) {
 			valueIsolationCheck(depth <= this.depth) { "lists or maps have been ended prematurely" }
 			valueIsolationCheck(this.depth <= depth) { "lists or maps have not been ended properly" }
@@ -64,12 +64,12 @@ internal class PropertyInjectingJSONReader(
 	}
 
 
-	private fun expectTokenForCustomProperty(expected: JSONToken) {
+	private fun expectTokenForCustomProperty(expected: JsonToken) {
 		currentProperty ?: return
 
 		val token = nextToken
 		if (token != expected) {
-			throw JSONException.Schema(
+			throw JsonException.Schema(
 				message = "Unexpected $token, expected $expected",
 				offset = offset,
 				path = path
@@ -82,10 +82,10 @@ internal class PropertyInjectingJSONReader(
 		get() = valueIsolationCount > 0 || source.isInValueIsolation
 
 
-	override val nextToken: JSONToken?
+	override val nextToken: JsonToken?
 		get() {
 			val nextToken = source.nextToken
-			if (nextToken != JSONToken.mapEnd) return nextToken
+			if (nextToken != JsonToken.mapEnd) return nextToken
 			if (depth.value != (rootDepth.value + 1) || !topLevelIsMap) return nextToken
 
 			if (currentProperty == null) {
@@ -95,9 +95,9 @@ internal class PropertyInjectingJSONReader(
 			}
 
 			return if (currentPropertyKeyRead)
-				JSONToken.stringValue
+				JsonToken.stringValue
 			else
-				JSONToken.mapKey
+				JsonToken.mapKey
 		}
 
 
@@ -111,52 +111,52 @@ internal class PropertyInjectingJSONReader(
 		}
 
 
-	override val path: JSONPath
+	override val path: JsonPath
 		get() {
 			val path = source.path
 			val currentProperty = currentProperty ?: return path
 
-			return JSONPath(path.elements + JSONPath.Element.MapKey(currentProperty.key))
+			return JsonPath(path.elements + JsonPath.Element.MapKey(currentProperty.key))
 		}
 
 
 	override fun readBoolean(): Boolean {
-		expectTokenForCustomProperty(JSONToken.booleanValue)
+		expectTokenForCustomProperty(JsonToken.booleanValue)
 
 		return source.readBoolean()
 	}
 
 
 	override fun readDouble(): Double {
-		expectTokenForCustomProperty(JSONToken.numberValue)
+		expectTokenForCustomProperty(JsonToken.numberValue)
 
 		return source.readDouble()
 	}
 
 
 	override fun readListEnd() {
-		expectTokenForCustomProperty(JSONToken.listEnd)
+		expectTokenForCustomProperty(JsonToken.listEnd)
 
 		source.readListEnd()
 	}
 
 
 	override fun readListStart() {
-		expectTokenForCustomProperty(JSONToken.listStart)
+		expectTokenForCustomProperty(JsonToken.listStart)
 
 		source.readListStart()
 	}
 
 
 	override fun readLong(): Long {
-		expectTokenForCustomProperty(JSONToken.numberValue)
+		expectTokenForCustomProperty(JsonToken.numberValue)
 
 		return source.readLong()
 	}
 
 
 	override fun readMapEnd() {
-		expectTokenForCustomProperty(JSONToken.mapEnd)
+		expectTokenForCustomProperty(JsonToken.mapEnd)
 
 		source.readMapEnd()
 
@@ -169,7 +169,7 @@ internal class PropertyInjectingJSONReader(
 
 
 	override fun readMapStart() {
-		expectTokenForCustomProperty(JSONToken.mapStart)
+		expectTokenForCustomProperty(JsonToken.mapStart)
 
 		if (depth == rootDepth) {
 			topLevelIsMap = true
@@ -180,14 +180,14 @@ internal class PropertyInjectingJSONReader(
 
 
 	override fun readNull(): Nothing? {
-		expectTokenForCustomProperty(JSONToken.nullValue)
+		expectTokenForCustomProperty(JsonToken.nullValue)
 
 		return source.readNull()
 	}
 
 
 	override fun readNumber(): Number {
-		expectTokenForCustomProperty(JSONToken.numberValue)
+		expectTokenForCustomProperty(JsonToken.numberValue)
 
 		return source.readNumber()
 	}
@@ -240,7 +240,7 @@ internal class PropertyInjectingJSONReader(
 
 
 	private fun valueIsolationError(message: String): Nothing {
-		throw JSONException.Parsing(
+		throw JsonException.Parsing(
 			message = "Value isolation failed: $message",
 			offset = offset,
 			path = path

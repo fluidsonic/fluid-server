@@ -1,16 +1,16 @@
-package com.github.fluidsonic.baku
+package io.fluidsonic.server
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import io.ktor.http.*
 
 
-internal object UrlJSONCodec : AbstractJSONCodec<Url, JSONCodingContext>() {
+internal object UrlJsonCodec : AbstractJsonCodec<Url, JsonCodingContext>() {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Url>) =
+	override fun JsonDecoder<JsonCodingContext>.decode(valueType: JsonCodingType<Url>) =
 		Url(readString())
 
 
-	override fun JSONEncoder<JSONCodingContext>.encode(value: Url) {
+	override fun JsonEncoder<JsonCodingContext>.encode(value: Url) {
 		writeString(value.toString())
 	}
 }

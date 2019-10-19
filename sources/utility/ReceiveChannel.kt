@@ -1,4 +1,4 @@
-package com.github.fluidsonic.baku
+package io.fluidsonic.server
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.*

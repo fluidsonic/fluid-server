@@ -1,6 +1,6 @@
-package com.github.fluidsonic.baku
+package io.fluidsonic.server
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
 abstract class BakuCommandFactory<in Transaction : BakuTransaction, Command : BakuCommand, Result : Any>(
@@ -10,10 +10,10 @@ abstract class BakuCommandFactory<in Transaction : BakuTransaction, Command : Ba
 	val name = BakuCommandName(name)
 
 
-	abstract fun JSONDecoder<Transaction>.decodeCommand(): Command
+	abstract fun JsonDecoder<Transaction>.decodeCommand(): Command
 
 
-	open fun JSONEncoder<Transaction>.encodeResult(result: Result) {
+	open fun JsonEncoder<Transaction>.encodeResult(result: Result) {
 		writeIntoMap {}
 	}
 
@@ -25,12 +25,12 @@ abstract class BakuCommandFactory<in Transaction : BakuTransaction, Command : Ba
 		abstract fun createCommand(): Command
 
 
-		final override fun JSONDecoder<Transaction>.decodeCommand() =
+		final override fun JsonDecoder<Transaction>.decodeCommand() =
 			createCommand().also { skipValue() }
 	}
 }
 
 
-fun <Transaction : BakuTransaction, Result : Any> BakuCommandFactory<Transaction, *, Result>.encodeResult(result: Result, encoder: JSONEncoder<Transaction>) =
+fun <Transaction : BakuTransaction, Result : Any> BakuCommandFactory<Transaction, *, Result>.encodeResult(result: Result, encoder: JsonEncoder<Transaction>) =
 	encoder.encodeResult(result)
 

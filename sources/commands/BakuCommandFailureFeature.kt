@@ -1,6 +1,6 @@
-package com.github.fluidsonic.baku
+package io.fluidsonic.server
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.client.utils.CacheControl
@@ -117,7 +117,7 @@ internal object BakuCommandFailureFeature : ApplicationFeature<ApplicationCallPi
 
 		respond(WriterContent(
 			body = {
-				JSONWriter.build(this).use { writer ->
+				JsonWriter.build(this).use { writer ->
 					writer.writeIntoMap {
 						writeMapElement("error") {
 							writeIntoMap {

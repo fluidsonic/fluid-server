@@ -1,6 +1,6 @@
-package com.github.fluidsonic.baku
+package io.fluidsonic.server
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-interface BakuTransaction : BakuContext, JSONCodingContext
+interface BakuTransaction : BakuContext, JsonCodingContext

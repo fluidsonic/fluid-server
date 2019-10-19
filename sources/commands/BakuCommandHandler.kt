@@ -1,4 +1,4 @@
-package com.github.fluidsonic.baku
+package io.fluidsonic.server
 
 
 internal class BakuCommandHandler<in Transaction : BakuTransaction, Command : BakuCommand, Result : Any>(

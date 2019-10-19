@@ -1,9 +1,9 @@
-package com.github.fluidsonic.baku
+package io.fluidsonic.server
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON(encoding = JSON.Encoding.none)
+@Json(encoding = Json.Encoding.none)
 inline class Password(val value: String) {
 
 	override fun toString() =

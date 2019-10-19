@@ -1,7 +1,7 @@
-package com.github.fluidsonic.baku
+package io.fluidsonic.server
 
-import com.github.fluidsonic.fluid.json.*
-import com.github.fluidsonic.fluid.mongo.*
+import io.fluidsonic.json.*
+import io.fluidsonic.mongo.*
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.http.*
@@ -108,11 +108,11 @@ class Baku internal constructor() {
 				override fun idFactoryForType(type: String) = idFactoriesByType[type]
 			})
 
-			val jsonCodecProviders: MutableList<JSONCodecProvider<Transaction>> = mutableListOf()
+			val jsonCodecProviders: MutableList<JsonCodecProvider<Transaction>> = mutableListOf()
 			jsonCodecProviders += configurations.flatMap { it.jsonCodecProviders }
-			jsonCodecProviders += configurations.flatMap { it.idFactories }.map { EntityIdJSONCodec(factory = it) }
-			jsonCodecProviders += JSONCodecProvider.extended
-			val jsonCodecProvider = JSONCodecProvider(jsonCodecProviders)
+			jsonCodecProviders += configurations.flatMap { it.idFactories }.map { EntityIdJsonCodec(factory = it) }
+			jsonCodecProviders += JsonCodecProvider.extended
+			val jsonCodecProvider = JsonCodecProvider(jsonCodecProviders)
 
 			providerBasedBSONCodecRegistry.context = context
 			providerBasedBSONCodecRegistry.provider = BSONCodecProvider.of(bsonCodecProviders)

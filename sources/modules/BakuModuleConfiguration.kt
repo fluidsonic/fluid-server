@@ -1,6 +1,6 @@
-package com.github.fluidsonic.baku
+package io.fluidsonic.server
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.routing.*
@@ -19,12 +19,12 @@ class BakuModuleConfiguration<Context : BakuContext, Transaction : BakuTransacti
 	@PublishedApi
 	internal val entities = Entities()
 
-	internal val additionalResponseEncodings: MutableList<JSONEncoder<Transaction>.() -> Unit> = mutableListOf()
+	internal val additionalResponseEncodings: MutableList<JsonEncoder<Transaction>.() -> Unit> = mutableListOf()
 	internal val bsonCodecProviders: MutableList<BSONCodecProvider<Context>> = mutableListOf()
 	internal val commandRoutes: MutableList<BakuCommandRoute<Transaction>> = mutableListOf()
 	internal val customConfigurations: MutableList<Application.() -> Unit> = mutableListOf()
 	internal val idFactories: MutableSet<EntityId.Factory<*>> = mutableSetOf()
-	internal val jsonCodecProviders: MutableList<JSONCodecProvider<Transaction>> = mutableListOf()
+	internal val jsonCodecProviders: MutableList<JsonCodecProvider<Transaction>> = mutableListOf()
 	internal val routeConfigurations: MutableList<Route.() -> Unit> = mutableListOf()
 	internal val routeWrappers: MutableList<Route.(next: Route.() -> Unit) -> Route> = mutableListOf()
 	internal val routedCommandNames: HashSet<BakuCommandName> = hashSetOf()
@@ -55,12 +55,12 @@ class BakuModuleConfiguration<Context : BakuContext, Transaction : BakuTransacti
 	}
 
 
-	fun json(vararg providers: JSONCodecProvider<Transaction>) {
+	fun json(vararg providers: JsonCodecProvider<Transaction>) {
 		jsonCodecProviders += providers
 	}
 
 
-	fun additionalResponseEncoding(encode: JSONEncoder<Transaction>.() -> Unit) {
+	fun additionalResponseEncoding(encode: JsonEncoder<Transaction>.() -> Unit) {
 		additionalResponseEncodings += encode
 	}
 

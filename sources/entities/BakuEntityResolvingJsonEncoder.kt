@@ -1,17 +1,17 @@
-package com.github.fluidsonic.baku
+package io.fluidsonic.server
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import kotlinx.coroutines.channels.*
 import org.slf4j.*
 import java.io.*
 
 
-internal class BakuEntityResolvingJSONEncoder<Transaction : BakuTransaction>(
-	private val codecProvider: JSONCodecProvider<Transaction>,
+internal class BakuEntityResolvingJsonEncoder<Transaction : BakuTransaction>(
+	private val codecProvider: JsonCodecProvider<Transaction>,
 	override val context: Transaction,
 	private val entityResolver: EntityResolver<Transaction>,
 	writer: Writer
-) : JSONEncoder<Transaction>, JSONWriter by JSONWriter.build(writer) {
+) : JsonEncoder<Transaction>, JsonWriter by JsonWriter.build(writer) {
 
 	private val cachedEntities: MutableMap<EntityId, Entity> = hashMapOf()
 	private val entityReferences: MutableSet<EntityId> = hashSetOf()
@@ -73,20 +73,20 @@ internal class BakuEntityResolvingJSONEncoder<Transaction : BakuTransaction>(
 				entityReferences += value
 			}
 
-			(codecProvider.encoderCodecForClass(value::class) as JSONEncoderCodec<Any, Transaction>?)
+			(codecProvider.encoderCodecForClass(value::class) as JsonEncoderCodec<Any, Transaction>?)
 				?.run {
 					try {
 						isolateValueWrite {
 							encode(value = value)
 						}
 					}
-					catch (e: JSONException) {
+					catch (e: JsonException) {
 						// TODO remove .java once KT-28418 is fixed
-						e.addSuppressed(JSONException.Serialization("… when encoding value of ${value::class} using ${this::class.java.name}: $value"))
+						e.addSuppressed(JsonException.Serialization("… when encoding value of ${value::class} using ${this::class.java.name}: $value"))
 						throw e
 					}
 				}
-				?: throw JSONException.Serialization(
+				?: throw JsonException.Serialization(
 					message = "No encoder codec registered for ${value::class}: $value",
 					path = path
 				)
@@ -100,6 +100,6 @@ internal class BakuEntityResolvingJSONEncoder<Transaction : BakuTransaction>(
 
 	companion object {
 
-		private val log = LoggerFactory.getLogger(BakuEntityResolvingJSONEncoder::class.java)!!
+		private val log = LoggerFactory.getLogger(BakuEntityResolvingJsonEncoder::class.java)!!
 	}
 }

@@ -1,4 +1,4 @@
-package com.github.fluidsonic.baku
+package io.fluidsonic.server
 
 import org.bson.*
 import org.bson.AbstractBsonReader.*
