@@ -7,7 +7,7 @@ plugins {
 	kotlin("kapt") version "1.3.50"
 }
 
-fluidJvmLibrary(name = "server", version = "0.9.35")
+fluidJvmLibrary(name = "server", version = "0.9.36")
 
 fluidJvmLibraryVariant(JvmTarget.jdk8) {
 	description = "helps you focus your REST API back-end on the business logic"
@@ -16,7 +16,7 @@ fluidJvmLibraryVariant(JvmTarget.jdk8) {
 dependencies {
 	api(fluid("json-annotations", "1.0.0"))
 	api(fluid("json-coding-jdk8", "1.0.0"))
-	api(fluid("mongo", "0.9.11"))
+	api(fluid("mongo", "1.0.0-beta.1"))
 	api(fluid("stdlib", "0.9.28")) {
 		attributes {
 			attribute(KotlinPlatformType.attribute, KotlinPlatformType.jvm)
