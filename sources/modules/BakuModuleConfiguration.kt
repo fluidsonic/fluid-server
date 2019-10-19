@@ -5,7 +5,7 @@ import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.routing.*
 import io.ktor.util.pipeline.*
-import kotlinx.coroutines.channels.*
+import kotlinx.coroutines.flow.*
 import kotlin.reflect.*
 
 
@@ -187,12 +187,12 @@ class BakuModuleConfiguration<Context : BakuContext, Transaction : BakuTransacti
 	inner class Entities internal constructor() {
 
 		@PublishedApi
-		internal val resolvers: MutableMap<KClass<out EntityId>, suspend Transaction.(ids: Set<EntityId>) -> ReceiveChannel<Entity>> = mutableMapOf()
+		internal val resolvers: MutableMap<KClass<out EntityId>, suspend Transaction.(ids: Set<EntityId>) -> Flow<Entity>> = mutableMapOf()
 
 
-		inline fun <reified Id : EntityId> resolve(noinline resolver: suspend Transaction.(ids: Set<Id>) -> ReceiveChannel<Entity>) {
+		inline fun <reified Id : EntityId> resolve(noinline resolver: suspend Transaction.(ids: Set<Id>) -> Flow<Entity>) {
 			@Suppress("UNCHECKED_CAST")
-			if (resolvers.putIfAbsent(Id::class, resolver as suspend Transaction.(ids: Set<EntityId>) -> ReceiveChannel<Entity>) != null) {
+			if (resolvers.putIfAbsent(Id::class, resolver as suspend Transaction.(ids: Set<EntityId>) -> Flow<Entity>) != null) {
 				error("Cannot register multiple entity resolvers for ${Id::class}")
 			}
 		}

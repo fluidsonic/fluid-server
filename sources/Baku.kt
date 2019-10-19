@@ -11,7 +11,7 @@ import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.*
+import kotlinx.coroutines.flow.*
 import org.bson.codecs.configuration.*
 import org.slf4j.event.*
 import kotlin.collections.component1
@@ -119,7 +119,7 @@ class Baku internal constructor() {
 			providerBasedBSONCodecRegistry.rootRegistry = bsonCodecRegistry
 
 			val entityResolverSources: MutableMap<KClass<out EntityId>, BakuModule<*, *>> = mutableMapOf()
-			val entityResolvers: MutableMap<KClass<out EntityId>, suspend Transaction.(ids: Set<EntityId>) -> ReceiveChannel<Entity>> =
+			val entityResolvers: MutableMap<KClass<out EntityId>, suspend Transaction.(ids: Set<EntityId>) -> Flow<Entity>> =
 				mutableMapOf()
 
 			for (configuration in configurations) {

@@ -1,12 +1,11 @@
 package io.fluidsonic.server
 
-import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.*
+import kotlinx.coroutines.flow.*
 import kotlin.reflect.*
 
 
 internal class EntityResolver<Transaction : BakuTransaction>(
-	private val resolvers: Map<KClass<out EntityId>, suspend Transaction.(ids: Set<EntityId>) -> ReceiveChannel<Entity>>
+	private val resolvers: Map<KClass<out EntityId>, suspend Transaction.(ids: Set<EntityId>) -> Flow<Entity>>
 ) {
 
 	suspend fun resolve(ids: Set<EntityId>, transaction: Transaction) =
@@ -15,8 +14,8 @@ internal class EntityResolver<Transaction : BakuTransaction>(
 			.map { (factory, ids) ->
 				resolvers[factory.idClass]
 					?.let { resolve -> transaction.resolve(ids.toSet()) }
-					?: GlobalScope.emptyReceiveChannel()
+					?: emptyFlow()
 			}
-			.toChannel()
-			.flatMap { it }
+			.asFlow()
+			.flattenConcat()
 }

@@ -1,7 +1,7 @@
 package io.fluidsonic.server
 
 import io.fluidsonic.json.*
-import kotlinx.coroutines.channels.*
+import kotlinx.coroutines.flow.*
 import org.slf4j.*
 import java.io.*
 
@@ -32,6 +32,7 @@ internal class BakuEntityResolvingJsonEncoder<Transaction : BakuTransaction>(
 
 			val resolvedEntitiesById = entityResolver
 				.resolve(ids = idsToResolve, transaction = context)
+				.toList() // https://github.com/Kotlin/kotlinx.coroutines/issues/1541
 				.associateByTo(hashMapOf()) { it.id }
 
 			for (id in idsToResolve) {

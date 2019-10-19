@@ -7,7 +7,7 @@ plugins {
 	kotlin("kapt") version "1.3.50"
 }
 
-fluidJvmLibrary(name = "server", version = "0.9.36")
+fluidJvmLibrary(name = "server", version = "0.9.37")
 
 fluidJvmLibraryVariant(JvmTarget.jdk8) {
 	description = "helps you focus your REST API back-end on the business logic"
