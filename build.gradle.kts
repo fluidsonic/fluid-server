@@ -2,12 +2,12 @@ import io.fluidsonic.gradle.*
 import org.jetbrains.kotlin.gradle.plugin.*
 
 plugins {
-	id("io.fluidsonic.gradle") version "1.0.2"
+	id("io.fluidsonic.gradle") version "1.0.3"
 	kotlin("jvm") version "1.3.50"
 	kotlin("kapt") version "1.3.50"
 }
 
-fluidJvmLibrary(name = "server", version = "0.9.37")
+fluidJvmLibrary(name = "server", version = "0.9.38")
 
 fluidJvmLibraryVariant(JvmTarget.jdk8) {
 	description = "helps you focus your REST API back-end on the business logic"
@@ -16,7 +16,7 @@ fluidJvmLibraryVariant(JvmTarget.jdk8) {
 dependencies {
 	api(fluid("json-annotations", "1.0.0"))
 	api(fluid("json-coding-jdk8", "1.0.0"))
-	api(fluid("mongo", "1.0.0-beta.1"))
+	api(fluid("mongo", "1.0.0-beta.2"))
 	api(fluid("stdlib", "0.9.28")) {
 		attributes {
 			attribute(KotlinPlatformType.attribute, KotlinPlatformType.jvm)
