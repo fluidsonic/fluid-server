@@ -2,9 +2,9 @@ import io.fluidsonic.gradle.*
 import org.jetbrains.kotlin.gradle.plugin.*
 
 plugins {
-	id("io.fluidsonic.gradle") version "1.0.3"
-	kotlin("jvm") version "1.3.50"
-	kotlin("kapt") version "1.3.50"
+	id("io.fluidsonic.gradle") version "1.0.7"
+	kotlin("jvm") version "1.3.61"
+	kotlin("kapt") version "1.3.61"
 }
 
 fluidJvmLibrary(name = "server", version = "0.9.38")
@@ -14,10 +14,10 @@ fluidJvmLibraryVariant(JvmTarget.jdk8) {
 }
 
 dependencies {
-	api(fluid("json-annotations", "1.0.0"))
-	api(fluid("json-coding-jdk8", "1.0.0"))
-	api(fluid("mongo", "1.0.0-beta.2"))
-	api(fluid("stdlib", "0.9.28")) {
+	api(fluid("json-annotations", "1.0.2"))
+	api(fluid("json-coding-jdk8", "1.0.2"))
+	api(fluid("mongo", "1.0.0-beta.4"))
+	api(fluid("stdlib", "0.9.29")) {
 		attributes {
 			attribute(KotlinPlatformType.attribute, KotlinPlatformType.jvm)
 			attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, Usage.JAVA_RUNTIME))
@@ -30,7 +30,7 @@ dependencies {
 
 	implementation("ch.qos.logback:logback-classic:1.2.3")
 
-	kapt(fluid("json-annotation-processor", "1.0.0"))
+	kapt(fluid("json-annotation-processor", "1.0.2"))
 }
 
 repositories {
@@ -39,5 +39,5 @@ repositories {
 
 
 @Suppress("unused")
-fun DependencyHandler.ktor(name: String, version: String = "1.2.5") =
+fun DependencyHandler.ktor(name: String, version: String = "1.3.0") =
 	"io.ktor:ktor-$name:$version"
