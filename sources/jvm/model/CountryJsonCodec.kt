@@ -8,11 +8,11 @@ internal object CountryJsonCodec : AbstractJsonCodec<Country, JsonCodingContext>
 
 	override fun JsonDecoder<JsonCodingContext>.decode(valueType: JsonCodingType<Country>) =
 		readString().let { code ->
-			Country.byCode(code) ?: invalidValueError("'$code' is not a valid IANA country code")
+			Country.byCode(CountryCode(code)) ?: invalidValueError("'$code' is not a valid IANA country code")
 		}
 
 
 	override fun JsonEncoder<JsonCodingContext>.encode(value: Country) {
-		writeString(value.code)
+		writeString(value.code.value)
 	}
 }

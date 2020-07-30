@@ -1,43 +1,37 @@
 import io.fluidsonic.gradle.*
-import org.jetbrains.kotlin.gradle.plugin.*
 
 plugins {
-	id("io.fluidsonic.gradle") version "1.0.7"
-	kotlin("jvm") version "1.3.61"
-	kotlin("kapt") version "1.3.61"
+	id("io.fluidsonic.gradle") version "1.1.2"
 }
 
-fluidJvmLibrary(name = "server", version = "0.9.39")
+fluidLibrary(name = "server", version = "0.9.39")
 
-fluidJvmLibraryVariant(JvmTarget.jdk8) {
-	description = "helps you focus your REST API back-end on the business logic"
-}
+fluidLibraryModule(description = "helps you focus your REST API back-end on the business logic") {
+	publishSingleTargetAsModule()
 
-dependencies {
-	api(fluid("json-annotations", "1.0.2"))
-	api(fluid("json-coding-jdk8", "1.0.2"))
-	api(fluid("mongo", "1.0.0-beta.4"))
-	api(fluid("stdlib", "0.9.29")) {
-		attributes {
-			attribute(KotlinPlatformType.attribute, KotlinPlatformType.jvm)
-			attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, Usage.JAVA_RUNTIME))
-			attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 8)
-		}
+	language {
+		withoutExplicitApi()
 	}
 
-	api(ktor("auth-jwt"))
-	api(ktor("server-netty"))
+	targets {
+		jvm {
+			withJava()
 
-	implementation("ch.qos.logback:logback-classic:1.2.3")
+			dependencies {
+				api(fluid("json-annotations", "1.1.0"))
+				api(fluid("json-coding-jdk8", "1.1.0"))
+				api(fluid("mongo", "1.1.1"))
+				api(fluid("stdlib", "0.10.0"))
+				api(ktor("auth-jwt"))
+				api(ktor("server-netty"))
 
-	kapt(fluid("json-annotation-processor", "1.0.2"))
+				implementation("ch.qos.logback:logback-classic:1.2.3")
+
+				kapt(fluid("json-annotation-processor", "1.1.0"))
+			}
+		}
+	}
 }
 
-repositories {
-	bintray("kotlin/ktor")
-}
-
-
-@Suppress("unused")
-fun DependencyHandler.ktor(name: String, version: String = "1.3.0") =
+fun ktor(name: String, version: String = "1.3.2-1.4.0-rc") =
 	"io.ktor:ktor-$name:$version"

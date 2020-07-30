@@ -12,6 +12,7 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import org.bson.codecs.*
 import org.bson.codecs.configuration.*
 import org.slf4j.event.*
 import kotlin.collections.component1
@@ -225,14 +226,19 @@ class Baku internal constructor() {
 		lateinit var rootRegistry: CodecRegistry
 
 
-		override fun <Value : Any> get(clazz: Class<Value>): BSONCodec<Value, Context> {
-			val codec = provider.codecForClass(clazz.kotlin) ?: throw CodecConfigurationException("No BSON codec provided for $clazz")
-			if (codec is AbstractBSONCodec<Value, Context>) {
+		override fun <Value : Any> get(clazz: Class<Value>, registry: CodecRegistry?): BSONCodec<Value, Context> {
+			val codec = provider.codecForClass(clazz.kotlin)
+				?: throw CodecConfigurationException("No BSON codec provided for $clazz")
+
+			if (codec is AbstractBSONCodec<Value, Context>)
 				codec.configure(context = context, rootRegistry = rootRegistry)
-			}
 
 			return codec
 		}
+
+
+		override fun <T : Any> get(clazz: Class<T>): Codec<T> =
+			get(clazz = clazz, registry = null)
 	}
 }
 
