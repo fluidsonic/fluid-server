@@ -7,7 +7,7 @@ fluid-server
 [![Ktor](https://img.shields.io/badge/Ktor-1.3.2-blue.svg)](https://github.com/ktorio/ktor/releases/tag/1.3.2)
 [![#fluid-libraries Slack Channel](https://img.shields.io/badge/slack-%23fluid--libraries-543951.svg?label=Slack)](https://kotlinlang.slack.com/messages/C7UDFSVT2/)
 
-You shouldn't use this. Work in progress :)
+This library is obsolete.
 
 
 

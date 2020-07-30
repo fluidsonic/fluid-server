@@ -4,7 +4,7 @@ plugins {
 	id("io.fluidsonic.gradle") version "1.1.2"
 }
 
-fluidLibrary(name = "server", version = "0.9.39")
+fluidLibrary(name = "server", version = "0.10.0")
 
 fluidLibraryModule(description = "helps you focus your REST API back-end on the business logic") {
 	publishSingleTargetAsModule()
