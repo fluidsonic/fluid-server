@@ -1,6 +1,6 @@
 package io.fluidsonic.server
 
-import io.fluidsonic.stdlib.*
+import io.fluidsonic.currency.*
 import org.bson.*
 
 
@@ -8,11 +8,11 @@ internal object CurrencyBSONCodec : AbstractBSONCodec<Currency, BSONCodingContex
 
 	override fun BsonReader.decode(context: BSONCodingContext) =
 		readString().let { code ->
-			runCatching { Currency.byCode(code) }.getOrNull() ?: throw BSONException("Invalid currency code '$code'")
+			Currency.forCodeOrNull(code) ?: throw BSONException("Invalid currency code '$code'")
 		}
 
 
 	override fun BsonWriter.encode(value: Currency, context: BSONCodingContext) {
-		writeString(value.code)
+		writeString(value.code.toString())
 	}
 }
