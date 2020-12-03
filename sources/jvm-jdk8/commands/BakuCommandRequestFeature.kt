@@ -8,6 +8,7 @@ import io.ktor.util.*
 import io.ktor.util.pipeline.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.jvm.javaio.*
+import kotlinx.coroutines.*
 import java.nio.charset.*
 
 
@@ -49,15 +50,19 @@ internal class BakuCommandRequestFeature<Transaction : BakuTransaction>(
 			val transaction = transaction as Transaction
 			val body = resolveBody(factory = factory)
 
-			proceedWith(ApplicationReceiveRequest(
-				type = subject.type,
-				value = parseCommandRequest(
+			val request = withContext(Dispatchers.IO) {
+				parseCommandRequest(
 					transaction = transaction,
 					body = body,
 					charset = call.request.contentCharset() ?: Charsets.UTF_8,
 					parameters = call.parameters,
 					factory = factory
 				)
+			}
+
+			proceedWith(ApplicationReceiveRequest(
+				type = subject.type,
+				value = request
 			))
 		}
 	}
@@ -70,7 +75,7 @@ internal class BakuCommandRequestFeature<Transaction : BakuTransaction>(
 		parameters: Parameters,
 		factory: BakuCommandFactory<Transaction, *, *>
 	): BakuCommandRequest {
-		val reader = JsonReader.build(body.toInputStream().reader(charset = charset)) // FIXME blocking
+		val reader = JsonReader.build(body.toInputStream().reader(charset = charset))
 
 		try {
 			var command: BakuCommand? = null

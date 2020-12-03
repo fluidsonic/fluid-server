@@ -7,6 +7,7 @@ import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.response.*
 import io.ktor.util.*
+import kotlinx.coroutines.*
 import java.io.*
 
 
@@ -29,10 +30,14 @@ internal class BakuCommandResponseFeature<Transaction : BakuTransaction>(
 
 			call.response.header(HttpHeaders.CacheControl, CacheControl.NO_CACHE)
 
-			proceedWith(serializeCommandResponse(
-				response = response,
-				transaction = transaction as Transaction
-			))
+			val output = withContext(Dispatchers.Default) {
+				serializeCommandResponse(
+					response = response,
+					transaction = transaction as Transaction
+				)
+			}
+
+			proceedWith(output)
 		}
 	}
 
