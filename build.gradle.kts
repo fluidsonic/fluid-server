@@ -1,7 +1,7 @@
 import io.fluidsonic.gradle.*
 
 plugins {
-	id("io.fluidsonic.gradle") version "1.1.13"
+	id("io.fluidsonic.gradle") version "1.1.14"
 }
 
 fluidLibrary(name = "server", version = "0.11.1")
@@ -18,8 +18,8 @@ fluidLibraryModule(description = "helps you focus your REST API back-end on the 
 			withJava()
 
 			dependencies {
-				api(fluid("country", "0.9.2"))
-				api(fluid("currency", "0.9.1"))
+				api(fluid("country", "0.9.3"))
+				api(fluid("currency", "0.9.2"))
 				api(fluid("json-annotations", "1.1.1"))
 				api(fluid("json-coding-jdk8", "1.1.1"))
 				api(fluid("mongo", "1.1.3"))
