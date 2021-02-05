@@ -1,20 +1,19 @@
 import io.fluidsonic.gradle.*
 
 plugins {
-	id("io.fluidsonic.gradle") version "1.1.14"
+	id("io.fluidsonic.gradle") version "1.1.18"
 }
 
 fluidLibrary(name = "server", version = "0.11.2")
 
 fluidLibraryModule(description = "helps you focus your REST API back-end on the business logic") {
-	publishSingleTargetAsModule()
-
 	language {
+		version("1.4")
 		withoutExplicitApi()
 	}
 
 	targets {
-		jvmJdk8 {
+		jvm {
 			withJava()
 
 			dependencies {
@@ -23,7 +22,7 @@ fluidLibraryModule(description = "helps you focus your REST API back-end on the 
 				api(fluid("json-annotations", "1.1.1"))
 				api(fluid("json-coding-jdk8", "1.1.1"))
 				api(fluid("mongo", "1.1.3"))
-				api(fluid("stdlib", "0.10.3"))
+				api(fluid("stdlib", "0.10.4"))
 				api(ktor("auth-jwt"))
 				api(ktor("server-netty"))
 
@@ -35,5 +34,5 @@ fluidLibraryModule(description = "helps you focus your REST API back-end on the 
 	}
 }
 
-fun ktor(name: String, version: String = "1.4.3") =
+fun ktor(name: String, version: String = "1.5.1") =
 	"io.ktor:ktor-$name:$version"
